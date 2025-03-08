@@ -1,6 +1,6 @@
 <script lang="ts">
     import DeprivedDevsLogo from "@images/Brands/DeprivedDevsLogo.svelte";
-    import { Plus } from "lucide-svelte";
+    import { X } from "lucide-svelte";
     import ETVRIcon from "@images/EyeTrackVR/ETVR_Logo.jpg";
 
     import { openUrl } from '@tauri-apps/plugin-opener';
@@ -20,7 +20,7 @@
                 </div>
             </button>
             <div>
-                <Plus class="fill-base-content"/>
+                <X class="fill-base-content"/>
             </div>
             <button on:click={()=>{openUrl("https://Deprived.dev/")}} class="w-20 h-20 cursor-pointer">
                 <img src="{ETVRIcon}" alt="ETVR">

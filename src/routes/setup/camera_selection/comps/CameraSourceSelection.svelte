@@ -8,7 +8,7 @@
 
 <div class="grid place-content-center w-full">
     <div class="flex flex-col place-content-center">
-        <div class="p-2">{eye} camera:</div>
+        <div class="pb-2">{eye} camera:</div>
         <select bind:value={selectedSourceType} on:change={()=>{selectedCameraAddress = undefined}} class="select select-primary text-base-content w-32">
             <option selected disabled>Pick</option>
             <option value="none">None</option>
@@ -22,7 +22,7 @@
     {#if selectedSourceType && selectedSourceType == "serial"}
     <div class="flex flex-col place-content-center w-32 overflow-hidden" transition:slide={{ duration: 500 }}>
         <div class="py-4"></div>
-        <div class="p-2 pb-4">Select Serial port:</div>
+        <div class="pb-2">Select Serial port:</div>
         <select bind:value={selectedCameraAddress} class="select select-primary text-base-content">
             <option selected disabled>Pick</option>
             <option value="com1">COM1</option>
@@ -37,13 +37,27 @@
     {#if selectedSourceType && selectedSourceType == "system"}
     <div class="flex flex-col place-content-center w-32 overflow-hidden" transition:slide={{ duration: 500 }}>
         <div class="py-4"></div>
-        <div class="p-2 pb-4">Select system device:</div>
+        <div class="pb-2">Select system device:</div>
         <select bind:value={selectedCameraAddress} class="select select-primary text-base-content">
             <option selected disabled>Pick</option>
             <option value="balls">DroidCam Source 1</option>
             <option value="balls">DroidCam Source 3</option>
             <option value="balls">Deprived Devs camera idk</option>
         </select>
+    </div>
+    {/if}
+
+    {#if selectedSourceType && selectedSourceType == "http"}
+    <div class="flex flex-col place-content-center w-32 overflow-hidden" transition:slide={{ duration: 500 }}>
+        <div class="py-4"></div>
+        <div class="pb-2">Enter URL:</div>
+        <input type="text" class="input" on:keydown={(e) => {
+            const target = e.target as HTMLInputElement;
+            if (e.key === "Enter") {
+                target.blur();
+            }
+        }}>
+        
     </div>
     {/if}
 
