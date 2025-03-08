@@ -5,17 +5,17 @@
 </script>
 
 <Navbar style="height: 10vh;"/>
-<div class="drawer-end lg:drawer-open" style="height: 89vh;">
-    <input id="SideDrawer" checked type="checkbox" class="drawer-toggle w-0" />
+<div class="w-full grid drawer-end lg:drawer-open max-xl:h-[89vh]">
+    <input id="SideDrawer" type="checkbox" class="drawer-toggle w-0" />
     <div class="drawer-content flex flex-col items-center justify-center w-full h-full">
         <!-- Page content here -->
 
-        <main class="main">
+        <main class="w-full h-full">
             <slot />
         </main>
 
     </div>
-    <div class="drawer-side w-full">
+    <div class="drawer-side w-full lg:h-[89vh]">
         <label
             for="SideDrawer"
             aria-label="close sidebar"

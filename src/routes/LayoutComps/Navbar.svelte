@@ -5,7 +5,7 @@
 
 <!-- svelte-ignore a11y_consider_explicit_label -->
 <!-- svelte-ignore a11y_missing_attribute -->
-<div {...$$restProps } class="navbar bg-base-100 shadow-sm">
+<div {...$$restProps } class="navbar bg-base-100 shadow-lg">
     <div class="flex-none">
         <a href="/tracking" class="btn btn-square btn-ghost">
             <img src="{ETVRIcon}" style="transform: scaleX(-100%);" alt="ETVR">
@@ -14,7 +14,7 @@
     <div class="flex-1">
         <a class="btn btn-ghost text-xl">EyeTrackVR</a>
     </div>
-    <div class="flex-none lg:hidden">
+    <div class="flex-none">
         <a href="https://github.com/MagicBOTAlex/TauriLearning" target="_blank">
             <div class="w-6 h-6 object-contain fill-base-content">
                 <GithubMark/>

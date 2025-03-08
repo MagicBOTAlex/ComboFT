@@ -2,9 +2,15 @@
     
 </script>
 
-<div class="grid place-items-center h-full">
-    <h1>Welcome to SvelteKit</h1>
-    <p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-    
-    <h1>Welcome to SvelteKit</h1>
+<div class="prose grid place-items-center h-full">
+    <div>
+        <h1 class="text-xl font-bold">Welcome to EyeTrackVR</h1>
+        <div class="py-1"></div> 
+        <p>We need to configure some settings before we can continue</p>
+        
+        <div class="py-4"></div>
+        <div class="flex justify-end">
+            <a href="/setup" class="btn btn-primary">Let's go!</a>
+        </div>
+    </div>
 </div>
