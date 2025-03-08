@@ -5,8 +5,8 @@
 </script>
 
 <Navbar style="height: 10vh;"/>
-<div class="drawer drawer-end lg:drawer-open overflow-hidden" style="height: 89vh;">
-    <input id="SideDrawer" type="checkbox" class="drawer-toggle" />
+<div class="drawer-end lg:drawer-open" style="height: 89vh;">
+    <input id="SideDrawer" checked type="checkbox" class="drawer-toggle w-0" />
     <div class="drawer-content flex flex-col items-center justify-center w-full h-full">
         <!-- Page content here -->
 
