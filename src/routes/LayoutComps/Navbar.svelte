@@ -7,9 +7,9 @@
 <!-- svelte-ignore a11y_missing_attribute -->
 <div {...$$restProps } class="navbar bg-base-100 shadow-sm">
     <div class="flex-none">
-        <button class="btn btn-square btn-ghost">
+        <a href="/tracking" class="btn btn-square btn-ghost">
             <img src="{ETVRIcon}" style="transform: scaleX(-100%);" alt="ETVR">
-        </button>
+        </a>
     </div>
     <div class="flex-1">
         <a class="btn btn-ghost text-xl">EyeTrackVR</a>

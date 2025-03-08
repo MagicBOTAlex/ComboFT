@@ -13,7 +13,7 @@
 
     <div class="w-full pb-6 mt-auto">
         <div class="flex place-items-center w-full justify-center">
-            <button on:click={()=>{openUrl("https://Deprived.dev/")}} class="w-20 h-20 overflow-hidden">
+            <button on:click={()=>{openUrl("https://Deprived.dev/")}} class="w-20 h-20 overflow-hidden cursor-pointer">
                 <div class="mt-auto w-65 h-30 fill-base-content">
                     <DeprivedDevsLogo/>
                 </div>
@@ -21,7 +21,7 @@
             <div>
                 <Plus class="fill-base-content"/>
             </div>
-            <button on:click={()=>{openUrl("https://Deprived.dev/")}} class="w-20 h-20">
+            <button on:click={()=>{openUrl("https://Deprived.dev/")}} class="w-20 h-20 cursor-pointer">
                 <img src="{ETVRIcon}" alt="ETVR">
             </button>
         </div>
