@@ -6,6 +6,25 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+
+// Didn't work...
+// struct SystemCameraInfo {
+//     name: String,
+//     index: i32
+// }
+// #[tauri::command]
+// fn getSystemCameras() -> Vec<SystemCameraInfo> {
+//     match Camera::list() {
+//         Ok(cameras) => {
+//             return cameras.iter().enumerate().map(|(index, name)| SystemCameraInfo {
+//                 name: name.clone(),
+//                 index: index as i32
+//             }).collect()
+//         }
+//         Err(e) => return Vec::new()
+//     }
+// }
+
 pub fn tauri_generate_context() -> tauri::Context {
     tauri::generate_context!()
 }

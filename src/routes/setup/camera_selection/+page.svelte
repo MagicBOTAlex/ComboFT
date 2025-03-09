@@ -2,12 +2,12 @@
     import {fly, scale, slide} from "svelte/transition";
     import CameraSelection from "./comps/CameraSourceSelection.svelte";
     import Tabs from "../comps/tabs.svelte";
-    import { pyInvoke } from "tauri-plugin-pytauri-api";
+    import { invoke } from "@tauri-apps/api/core";
 
     let testContainer: HTMLElement;
 
     async function getCameras() {
-        const pyGreeting = await pyInvoke<string[]>("getSystemCameras", {});
+        const pyGreeting = await invoke("getSystemCameras");
         console.log(pyGreeting);
     }
     

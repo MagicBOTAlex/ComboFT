@@ -1,7 +1,8 @@
 # --8<-- [start:command]
 
 import sys
-from .ZConnector import get_camera_devices
+
+from EyeTrackApp import eyetrackapp
 
 from anyio.from_thread import start_blocking_portal
 from pydantic import BaseModel
@@ -20,14 +21,15 @@ class Greeting(BaseModel):
     message: str
 @commands.command()
 async def greet(body: Person) -> Greeting:
+    eyetrackapp.main()
     return Greeting(
         message=f"Hello, {body.name}!"
     )
 
 
-@commands.command()
-async def getSystemCameras() -> list[str]:
-    return get_camera_devices()
+# @commands.command()
+# async def getSystemCameras() -> list[str]:
+#     return get_camera_devices()
 
 
 
