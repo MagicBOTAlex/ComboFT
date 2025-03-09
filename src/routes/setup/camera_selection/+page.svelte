@@ -9,18 +9,24 @@
     import { CameraStreamType } from "@src/lib/structs/CameraStreamType";
     import { Camera } from "lucide-svelte";
     import { onMount } from "svelte";
+    import { invoke } from "@tauri-apps/api/core";
 
     async function onFinishClick(){
-        const camera = get(Cameras)[TrackerPosition.Left];
-        ETVRController.pushCameraAddr(camera!);
-        // console.log( await ETVRController.getTrackingCameraStream(TrackerPosition.Left, CameraStreamType.Raw));
+        const cameras_ = get(Cameras);
+        Object.values(cameras_).map(x=>{
+            if (x.isEnabled)
+                ETVRController.pushCameraAddr(x!);
+        });
+
         ETVRController.start();
+        // console.log( await ETVRController.getTrackingCameraStream(TrackerPosition.Left, CameraStreamType.Raw));
 
         goto('/setup/testing_con');
     }
 
+
     onMount(async () =>{
-        
+
     });
 
     let enableBabble: boolean = false;

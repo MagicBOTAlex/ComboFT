@@ -6,6 +6,7 @@
     import { get } from "svelte/store";
     import { Camera } from "@src/lib/structs/Camera";
     import { onMount } from "svelte";
+    import { invoke } from "@tauri-apps/api/core";
 
     export let position: TrackerPosition;
     export let selectedSourceType: string | undefined = undefined;
@@ -15,6 +16,12 @@
     let systemCamSelector: HTMLSelectElement;
     let serialSelector: HTMLSelectElement;
     let httpInputValue: string;
+
+    let serialPorts: string[] = [];
+    async function loadSerialPorts(){
+        serialPorts = await invoke("get_list_of_serial");
+        console.log("Serial ports detected: " + serialPorts);
+    }
 
     function onSourceChange(e: Event) {
         const target = e.target as HTMLSelectElement;
@@ -31,6 +38,7 @@
                 break;
             case "serial":
                 console.log("Using Serial/USB source.");
+                loadSerialPorts();
                 updateSourceType(CameraSourceType.Serial);
                 break;
             case "system":
@@ -96,6 +104,10 @@
             case CameraSourceType.HTTP:
                 if (prevConf.addr) httpInputValue = prevConf.addr;
                 break;
+            case CameraSourceType.Serial:
+                loadSerialPorts();
+                if (prevConf.addr) selectedCameraAddress = prevConf.addr;
+                break;
             default:
                 break;
         }
@@ -135,12 +147,13 @@
                 bind:this={serialSelector}
                 class="select select-primary text-base-content"
             >
-                <option selected disabled>Pick</option>
-                <option value="com1">COM1</option>
-                <option value="com2">COM1</option>
-                <option value="com3">COM1</option>
-                <option value="com4">COM1</option>
-                <option value="com5">COM1</option>
+            {#if serialPorts.length > 0}
+                {#each serialPorts as port}
+                     <option value="{port}">{port}</option>
+                {/each}
+            {:else}
+            <option disabled value="">No serial detected</option>
+            {/if}
             </select>
         </div>
     {/if}
