@@ -3,7 +3,7 @@
     import TrackingInspectMode from "./comps/TrackingInspectMode.svelte";
     import TrackingNormalMode from "./comps/TrackingNormalMode.svelte";
 
-    let inspectMode: boolean = true;
+    let inspectMode: boolean = false;
 </script>
 
 {#if !inspectMode}

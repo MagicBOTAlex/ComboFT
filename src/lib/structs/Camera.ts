@@ -1,12 +1,15 @@
-import type { CameraSourceType } from "./CameraSourceType";
-import type { TrackingCamera } from "./TrackingCamera";
+import { CameraSourceType } from "./CameraSourceType";
+import type { TrackerPosition } from "./TrackerPosition";
 
-export interface Camera {
-    cameraPosition: TrackingCamera;
-    isEnabled: boolean;
-    streamUrl: string | undefined;
-    UUID: string | undefined;
+export class Camera {
+    isEnabled: boolean = false;
+    streamUrl: string | undefined = undefined;
+    UUID: string | undefined = undefined;
 
-    addr: string;
-    sourceType: CameraSourceType; 
+    addr: string = "";
+    sourceType: CameraSourceType = CameraSourceType.None; 
+
+    public constructor(public position: TrackerPosition){
+        
+    }
 }

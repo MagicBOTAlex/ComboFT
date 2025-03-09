@@ -2,6 +2,9 @@
     import {fly, slide} from "svelte/transition";
     import Tabs from "../comps/tabs.svelte";
     import CameraConTest from "../../../lib/CameraConnection.svelte";
+    import { TrackerPosition } from "@src/lib/structs/TrackerPosition";
+    import { get } from "svelte/store";
+    import { Cameras } from "@src/store";
 </script>
 
 <Tabs enabled={["", "tab-active", "tab-disabled"]}/>
@@ -14,9 +17,16 @@
             </div>
             <div class="divider"></div>
             <div class="flex justify-center w-full gap-4">
-                <CameraConTest/>
-                <CameraConTest/>
-                <CameraConTest/>
+                {#each Object.values(get(Cameras)) as camera}
+                {#if camera.isEnabled}
+                <CameraConTest camera={camera}>
+                    <div class="p-4">
+                        <div class="text-lg font-bold">{camera.position} camera</div>
+                        <div class="text-sm">Source type: {camera.sourceType}</div>
+                    </div>
+                </CameraConTest>
+                {/if}
+                {/each}
             </div>
             <div class="py-4"></div>
             <div class="p-4 overflow-hidden">

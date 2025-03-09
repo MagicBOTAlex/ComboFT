@@ -1,13 +1,13 @@
 <script lang="ts">
     import { fly, slide } from "svelte/transition";
-    import { TrackingCamera } from "../../../../lib/structs/TrackingCamera";
+    import { TrackerPosition } from "../../../../lib/structs/TrackerPosition";
     import { Cameras } from "@src/store";
     import { CameraSourceType } from "@src/lib/structs/CameraSourceType";
     import { get } from "svelte/store";
-    import type { Camera } from "@src/lib/structs/Camera";
+    import { Camera } from "@src/lib/structs/Camera";
     import { onMount } from "svelte";
 
-    export let position: TrackingCamera;
+    export let position: TrackerPosition;
     export let selectedSourceType: string | undefined = undefined;
     export let selectedCameraAddress: string | undefined = undefined; // Heavily depends on source type. Unselect by default, maybe TODO: Remember. Update: May be I've implimented something different now
 
@@ -66,6 +66,7 @@
 
     function updateSourceType(sourceType: CameraSourceType) {
         updateCameraField("sourceType", sourceType);
+        updateCameraField("isEnabled", sourceType != CameraSourceType.None);
     }
 
     function setAddr(addr: string) {
@@ -88,7 +89,7 @@
     }
 
     function loadPrevConfig() {
-        const prevConf = get(Cameras)[position];
+        const prevConf = get(Cameras)[position]!;
         if (prevConf.sourceType) selectedSourceType = prevConf.sourceType;
 
         switch (prevConf.sourceType) {
