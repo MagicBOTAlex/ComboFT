@@ -15,7 +15,7 @@
         <a class="btn btn-ghost p-0 text-xl">
             <div class="">
                 <div>EyeTrackVR</div>
-                <div class="text-xs opacity-50 text-left">Unofficial UI</div>
+                <div class="text-xs opacity-50 text-left">Unofficial UI, by BOTAlex</div>
             </div>
         </a>
     </div>
