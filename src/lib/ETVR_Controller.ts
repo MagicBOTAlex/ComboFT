@@ -4,17 +4,21 @@ import { CameraStreamType } from "./structs/CameraStreamType";
 import { ETVRStatus } from "./structs/ETVRBackendStatus";
 import type { ETVRConfig, Tracker as TrackerConfig } from "./structs/ETVRConfig";
 import type { TrackingCamera } from "./structs/TrackingCamera";
+import { writable, type Writable} from 'svelte/store';
 
 export class ETVR_Controller {
     status: ETVRStatus = ETVRStatus.Stopped;
     api: ETVRApi; // Oh shit, TS supports this? I love it!!!
     config: ETVRConfig |undefined;
     UUIDs: Partial<Record<TrackingCamera, string | undefined>> = {};
+    store: Writable<ETVR_Controller> | any;
 
     constructor(url: string) {
         this.api = new ETVRApi(url);
         this.api.loadConfig(); // Load old config by default
         this.getConfig(true);
+        this.store = writable(this);
+        
 
 
         setInterval(this.loop, 250); // Update status every 0.25s
