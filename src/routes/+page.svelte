@@ -1,5 +1,19 @@
-<script>
-    
+<script lang="ts">
+    import { invoke } from "@tauri-apps/api/core";
+    import { pyInvoke } from "tauri-plugin-pytauri-api";
+
+    let testButton: HTMLElement;
+
+    interface Greeting {
+        message: string;
+    }
+
+    async function greet() {
+        const pyGreeting = await pyInvoke<Greeting>("greet", {
+                name: "Test",
+            });
+        testButton.innerText = pyGreeting.message;
+    }
 </script>
 
 <div class="prose grid place-items-center h-full">
@@ -11,6 +25,7 @@
         <div class="py-4"></div>
         <div class="flex justify-end">
             <a href="/setup" class="btn btn-primary">Let's go!</a>
+            <button id="test-python-btn" class="btn btn-primary" bind:this={testButton} on:click={greet}>Test python</button>
         </div>
     </div>
 </div>

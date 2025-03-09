@@ -3,7 +3,13 @@ name = "learningTauri"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.9"
-dependencies = ["pytauri == 0.3.*"]  
+dependencies = [
+    "pydantic == 2.*",
+    "anyio == 4.*",
+    "pytauri == 0.3.*",
+    "opencv-python",
+    "pywin32"
+]
 
 [project.entry-points.pytauri]
 ext_mod = "learningTauri.ext_mod"

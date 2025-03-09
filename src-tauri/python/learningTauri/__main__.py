@@ -4,6 +4,8 @@ from multiprocessing import freeze_support
 
 from learningTauri import main
 
+
+
 # - If you don't use `multiprocessing`, you can remove this line.
 # - If you do use `multiprocessing` but without this line,
 #   you will get endless spawn loop of your application process.
