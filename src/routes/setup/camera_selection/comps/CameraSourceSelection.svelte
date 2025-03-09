@@ -4,10 +4,17 @@
     import { Cameras } from "@src/store";
     import { CameraSourceType } from "@src/lib/structs/CameraSourceType";
     import { get } from "svelte/store";
+    import type { Camera } from "@src/lib/structs/Camera";
+    import { onMount } from "svelte";
 
     export let position: TrackingCamera;
     export let selectedSourceType: string | undefined = undefined;
     export let selectedCameraAddress: string | undefined = undefined; // Heavily depends on source type. Unselect by default, maybe TODO: Remember. Update: May be I've implimented something different now
+
+    let sourceTypeSelector: HTMLSelectElement;
+    let systemCamSelector: HTMLSelectElement;
+    let serialSelector: HTMLSelectElement;
+    let httpInputValue: string;
 
     function onSourceChange(e: Event) {
         const target = e.target as HTMLSelectElement;
@@ -41,17 +48,61 @@
         }
     }
 
-    function updateSourceType(sourceType: CameraSourceType) {
-        const camerasValue = get(Cameras);
-        if (!camerasValue[position]) return;
-
-        camerasValue[position].sourceType = sourceType;
+    function updateCameraField(field: keyof Camera, value: any) {
         Cameras.update((store) => {
-            store[position] = camerasValue[position];
-            return store;
+            if (!store[position]) return store; // Guard clause
+
+            return {
+                ...store,
+                [position]: {
+                    ...store[position],
+                    [field]: value,
+                },
+            };
         });
-        console.log(get(Cameras)[position]);
+
+        console.log(get(Cameras)[position]); // Debugging (optional)
     }
+
+    function updateSourceType(sourceType: CameraSourceType) {
+        updateCameraField("sourceType", sourceType);
+    }
+
+    function setAddr(addr: string) {
+        updateCameraField("addr", addr);
+    }
+
+    function normalizeIP(ip: string): string {
+        // Remove leading/trailing spaces
+        ip = ip.trim();
+
+        // Check if it already has a scheme (http:// or https://)
+        if (!/^https?:\/\//.test(ip)) {
+            ip = "http://" + ip;
+        }
+
+        // Remove any trailing slashes and append a single slash
+        ip = ip.replace(/\/+$/, "") + "/";
+
+        return ip;
+    }
+
+    function loadPrevConfig() {
+        const prevConf = get(Cameras)[position];
+        if (prevConf.sourceType) selectedSourceType = prevConf.sourceType;
+
+        switch (prevConf.sourceType) {
+            case CameraSourceType.HTTP:
+                if (prevConf.addr) httpInputValue = prevConf.addr;
+                break;
+            default:
+                break;
+        }
+    }
+
+    onMount(() => {
+        loadPrevConfig();
+    });
 </script>
 
 <div class="grid place-content-center w-full">
@@ -60,6 +111,7 @@
         <select
             bind:value={selectedSourceType}
             on:change={onSourceChange}
+            bind:this={sourceTypeSelector}
             class="select select-primary text-base-content w-32"
         >
             <option selected value="none">None</option>
@@ -79,6 +131,7 @@
             <div class="pb-2">Select Serial port:</div>
             <select
                 bind:value={selectedCameraAddress}
+                bind:this={serialSelector}
                 class="select select-primary text-base-content"
             >
                 <option selected disabled>Pick</option>
@@ -100,6 +153,7 @@
             <div class="pb-2">Select system device:</div>
             <select
                 bind:value={selectedCameraAddress}
+                bind:this={systemCamSelector}
                 class="select select-primary text-base-content"
             >
                 <option selected disabled>Pick</option>
@@ -120,11 +174,19 @@
             <input
                 type="text"
                 class="input"
+                bind:value={httpInputValue}
                 on:keydown={(e) => {
                     const target = e.target as HTMLInputElement;
                     if (e.key === "Enter") {
                         target.blur();
                     }
+                    setAddr(normalizeIP(target.value));
+                }}
+                on:paste={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    setTimeout(() => {
+                        setAddr(normalizeIP(target.value));
+                    }, 10);
                 }}
             />
         </div>
