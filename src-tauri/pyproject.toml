@@ -1,0 +1,16 @@
+[project]
+name = "learningTauri"  
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.9"
+dependencies = ["pytauri == 0.3.*"]  
+
+[project.entry-points.pytauri]
+ext_mod = "learningTauri.ext_mod"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages]
+find = { where = ["python"] }
