@@ -35,7 +35,7 @@
 <Tabs enabled={["tab-active", "tab-disabled", "tab-disabled"]}/>
 <div class="w-full h-full flex flex-col justify-center">
     <div class="flex justify-center">
-        <div class="w-full px-56">
+        <div class="flex flex-col w-full px-32">
             <div class="px-4">
                 <div class="font-bold text-2xl">Camera source</div>
                 <div class="flex justify-between">
