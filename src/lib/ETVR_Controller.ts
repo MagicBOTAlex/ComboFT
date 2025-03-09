@@ -21,7 +21,7 @@ export class ETVR_Controller {
         
 
 
-        setInterval(this.loop, 250); // Update status every 0.25s
+        setInterval(this.loop.bind(this), 250); // Update status every 0.25s
     }
 
     async start(){this.api.startETVR();}    

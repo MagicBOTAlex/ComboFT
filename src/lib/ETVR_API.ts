@@ -65,6 +65,7 @@ export class ETVRApi {
 
   public getETVRStatus(): Promise<any> {
     const url = `${this.baseURL}/etvr/status`;
+    // console.log("Sending to: "+ url);
     return fetchJson<any>(url);
   }
 
