@@ -26,7 +26,7 @@
 
 
     onMount(async () =>{
-
+        ETVRController.Stop();
     });
 
     let enableBabble: boolean = false;

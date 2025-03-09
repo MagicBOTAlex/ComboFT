@@ -10,7 +10,7 @@
 
     export let position: TrackerPosition;
     export let selectedSourceType: string | undefined = undefined;
-    export let selectedCameraAddress: string | undefined = undefined; // Heavily depends on source type. Unselect by default, maybe TODO: Remember. Update: May be I've implimented something different now
+    let selectedCameraAddress: string | undefined = undefined;
 
     let sourceTypeSelector: HTMLSelectElement;
     let systemCamSelector: HTMLSelectElement;
@@ -74,10 +74,11 @@
 
     function updateSourceType(sourceType: CameraSourceType) {
         updateCameraField("sourceType", sourceType);
-        updateCameraField("isEnabled", sourceType != CameraSourceType.None);
+        updateCameraField("isEnabled", sourceType != CameraSourceType.None && selectedCameraAddress != "" && selectedCameraAddress != undefined);
     }
 
     function setAddr(addr: string) {
+        selectedCameraAddress = addr;
         updateCameraField("addr", addr);
     }
 
