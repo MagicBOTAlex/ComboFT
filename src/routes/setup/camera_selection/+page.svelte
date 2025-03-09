@@ -2,7 +2,15 @@
     import {fly, scale, slide} from "svelte/transition";
     import CameraSelection from "./comps/CameraSourceSelection.svelte";
     import Tabs from "../comps/tabs.svelte";
+    import { pyInvoke } from "tauri-plugin-pytauri-api";
 
+    let testContainer: HTMLElement;
+
+    async function getCameras() {
+        const pyGreeting = await pyInvoke<string[]>("getSystemCameras", {});
+        console.log(pyGreeting);
+    }
+    
     let enableBabble: boolean = false;
 </script>
 
@@ -14,7 +22,7 @@
                 <div class="font-bold text-2xl">Camera source</div>
                 <div class="flex justify-between">
                     <div>Please select type of camera source</div>
-                    <input type="checkbox" class="checkbox checkbox-sm" bind:checked={enableBabble}>
+                    <input type="checkbox" class="checkbox checkbox-sm" on:change={getCameras} bind:checked={enableBabble}>
                 </div>
             </div>
             <div class="divider"></div>
