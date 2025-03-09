@@ -2,6 +2,9 @@
     import {fly, scale, slide} from "svelte/transition";
     import CameraSelection from "./comps/CameraSourceSelection.svelte";
     import Tabs from "../comps/tabs.svelte";
+    import { TrackingCamera } from "../../../lib/structs/TrackingCamera";
+
+    
 
     let enableBabble: boolean = false;
 </script>
@@ -19,12 +22,12 @@
             </div>
             <div class="divider"></div>
             <div class="flex justify-evenly">
-                <CameraSelection eye="Left"/>
+                <CameraSelection position={TrackingCamera.Left}/>
                 <div class="divider divider-horizontal px-0 m-2"></div>
-                <CameraSelection eye="Right"/>
+                <CameraSelection position={TrackingCamera.Right}/>
                 {#if enableBabble}
                 <div class="divider divider-horizontal px-0 m-2"></div>
-                <CameraSelection eye="Babble"/>
+                <CameraSelection position={TrackingCamera.Babble}/>
                 {/if}
             </div>
             <div class="py-4"></div>

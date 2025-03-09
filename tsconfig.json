@@ -11,7 +11,8 @@
     "strict": true,
     "moduleResolution": "bundler",
     "paths": {
-      "@images/*": ["./src/images/*"]
+      "@images/*": ["./src/images/*"],
+      "@src/*": ["./src/*"]
     }
   },
   // Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
