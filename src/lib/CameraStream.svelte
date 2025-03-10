@@ -21,6 +21,7 @@
     // Stop interval when component is destroyed
     onDestroy(() => {
         clearInterval(interval);
+        imageElement.src = "";
     });
 
     function reloadStream(){

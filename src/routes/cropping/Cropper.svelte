@@ -49,20 +49,39 @@
     };
   
     const handleMouseUp = () => {
-      if (!hasMoved || !isSelecting) {
-        isSelecting = false;
-        return;
-      }
-  
-      // Save the final selection for the persistent blue border
-      finalSelectionBox = { ...selectionBox };
-      console.log("Selected Region:", selectionBox);
-      if (onFinishCropping != undefined){
-        let box = new Box(selectionBox.x,selectionBox.y,selectionBox.width,selectionBox.height);
-        onFinishCropping(box);
-      }
+        if (!hasMoved || !isSelecting) {
+            isSelecting = false;
+            return;
+        }
 
-      isSelecting = false;
+        // Calculate scaling factors
+        const rect = image.getBoundingClientRect();
+        const scaleX = image.naturalWidth / rect.width;
+        const scaleY = image.naturalHeight / rect.height;
+
+        // Scale coordinates to original image dimensions
+        const scaledSelection = {
+            x: selectionBox.x * scaleX,
+            y: selectionBox.y * scaleY,
+            width: selectionBox.width * scaleX,
+            height: selectionBox.height * scaleY
+        };
+
+        // Round to nearest integer (pixel values)
+        const finalBox = new Box(
+            Math.round(scaledSelection.x),
+            Math.round(scaledSelection.y),
+            Math.round(scaledSelection.width),
+            Math.round(scaledSelection.height)
+        );
+
+        if (onFinishCropping) {
+            onFinishCropping(finalBox);
+        }
+
+        // Save scaled version for display (optional, see note below)
+        finalSelectionBox = { ...selectionBox };
+        isSelecting = false;
     };
   
     onMount(() => {
