@@ -149,7 +149,7 @@
             <div class="py-4"></div>
             <div class="pb-2">Select Serial port:</div>
             <select
-                on:select={()=> {setTimeout(() => {
+                on:change={()=> {setTimeout(() => {
                     setAddr(serialSelector.value);
                 }, 10);}}
                 bind:this={serialSelector}
