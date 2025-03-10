@@ -1,5 +1,9 @@
 <script lang="ts">
+    import { Box } from "@src/lib/structs/Box";
     import { onMount } from "svelte";
+
+    export let imageSrc: string;
+    export let onFinishCropping: (finalBox: Box) => void | undefined;
   
     let image: HTMLImageElement;
     let selectionBox = { x: 0, y: 0, width: 0, height: 0 };
@@ -42,7 +46,7 @@
     };
   
     const handleMouseUp = () => {
-      if (!hasMoved) {
+      if (!hasMoved || !isSelecting) {
         isSelecting = false;
         return;
       }
@@ -50,6 +54,11 @@
       // Save the final selection for the persistent blue border
       finalSelectionBox = { ...selectionBox };
       console.log("Selected Region:", selectionBox);
+      if (onFinishCropping != undefined){
+        let box = new Box(selectionBox.x,selectionBox.y,selectionBox.width,selectionBox.height);
+        onFinishCropping(box);
+      }
+
       isSelecting = false;
     };
   
@@ -60,10 +69,12 @@
   </script>
   
   <div class="relative inline-block">
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <!-- svelte-ignore a11y_img_redundant_alt -->
     <img
       bind:this={image}
-      src="https://placehold.co/600x400/EEE/31343C"
-      alt="Placeholder Image"
+      src="{imageSrc}"
+      alt=""
       class="select-none pointer-events-auto"
       on:mousedown={handleMouseDown}
       on:mousemove={handleMouseMove}

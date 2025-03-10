@@ -1,5 +1,6 @@
 import { ETVRApi} from "./ETVR_API";
 import { Logger } from "./Logger";
+import type { Box } from "./structs/Box";
 import type { Camera } from "./structs/Camera";
 import { CameraStreamType } from "./structs/CameraStreamType";
 import { ETVRStatus } from "./structs/ETVRBackendStatus";
@@ -120,6 +121,21 @@ export class ETVR_Controller {
         this.api.updateTracker(uuid, {
             "camera": {
                 "capture_source": cam.addr
+            }
+        });
+    }
+
+    public async pushCrop(position: TrackerPosition, croppingBox: Box){
+        // Third time using this chunk. This is really a TODO lol
+        if (!this.UUIDs[position]) await this.getTrackingCameraStream(position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad.
+        if (this.UUIDs[position] == undefined) return;
+        let uuid: string = this.UUIDs[position]!;
+        this.api.updateTracker(uuid, {
+            "camera": {
+                "roi_x": croppingBox.x,
+                "roi_y": croppingBox.y,
+                "roi_w": croppingBox.w,
+                "roi_h": croppingBox.h
             }
         });
     }

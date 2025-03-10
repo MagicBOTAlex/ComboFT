@@ -9,6 +9,7 @@
     import { CameraStreamType } from '@src/lib/structs/CameraStreamType';
     import { onDestroy } from 'svelte';
     import Cropper from './Cropper.svelte';
+    import type { Box } from '@src/lib/structs/Box';
 
     $: params = new URLSearchParams(page.url.search);
     $: cam = params.get('cam'); // Raw URL param (string)
@@ -22,6 +23,10 @@
         ETVRController.pushCameraAddr(croppingCam);
         videoStreamSource = await ETVRController.getTrackingCameraStream(croppingCam.position, CameraStreamType.Raw)
     });
+
+    function onFinishCropping(finalBox: Box) {
+        ETVRController.pushCrop(cam as TrackerPosition, finalBox);
+    }
 </script>
 
-<Cropper/>
+<Cropper {onFinishCropping} imageSrc={videoStreamSource}/>
