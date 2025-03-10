@@ -24,9 +24,4 @@
     });
 </script>
 
-<h1>Profile Page</h1>
-<p>Name: {cam}</p>
-
-<h2 class="text-lg font-semibold mb-4">Drag to Select a Region</h2>
-
 <Cropper/>

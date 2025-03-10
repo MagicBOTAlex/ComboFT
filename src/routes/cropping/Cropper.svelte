@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
-
   
     let image: HTMLImageElement;
     let selectionBox = { x: 0, y: 0, width: 0, height: 0 };
+    let finalSelectionBox: { x: number; y: number; width: number; height: number } | null = null;
     let isSelecting = false;
     let hasMoved = false;
     let startX = 0;
@@ -47,6 +47,8 @@
         return;
       }
   
+      // Save the final selection for the persistent blue border
+      finalSelectionBox = { ...selectionBox };
       console.log("Selected Region:", selectionBox);
       isSelecting = false;
     };
@@ -66,6 +68,7 @@
       on:mousedown={handleMouseDown}
       on:mousemove={handleMouseMove}
       on:mouseup={handleMouseUp}
+      on:mouseleave={handleMouseUp}
     />
   
     {#if isSelecting && hasMoved}
@@ -76,6 +79,18 @@
           top: {selectionBox.y}px;
           width: {selectionBox.width}px;
           height: {selectionBox.height}px;
+        "
+      ></div>
+    {/if}
+  
+    {#if finalSelectionBox}
+      <div
+        class="absolute border-2 border-blue-500 pointer-events-none"
+        style="
+          left: {finalSelectionBox.x}px;
+          top: {finalSelectionBox.y}px;
+          width: {finalSelectionBox.width}px;
+          height: {finalSelectionBox.height}px;
         "
       ></div>
     {/if}
