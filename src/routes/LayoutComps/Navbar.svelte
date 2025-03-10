@@ -14,7 +14,7 @@
     <div class="flex-1">
         <a class="btn btn-ghost p-0 text-xl">
             <div class="">
-                <div>EyeTrackVR + Babble</div>
+                <div>EyeTrackVR + <span class="line-through">Babble</span><span class="pl-1 text-xs opacity-10">Yet</span></div>
                 <div class="text-xs opacity-50 text-left">Unofficial UI</div>
             </div>
         </a>
