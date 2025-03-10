@@ -3,6 +3,10 @@
     import Tabs from "../comps/tabs.svelte";
     import CameraConTest from "../../../lib/CameraConnection.svelte";
     import { CameraConnectionType } from "../../../lib/CameraConnectionType";
+    import CameraConnection from "../../../lib/CameraConnection.svelte";
+    import { Cameras } from "@src/store";
+    import { get } from "svelte/store";
+    import { Crop } from "lucide-svelte";
 </script>
 
 <Tabs enabled={["", "", "tab-active"]}/>
@@ -15,9 +19,19 @@
             </div>
             <div class="divider"></div>
             <div class="flex justify-center w-full gap-4">
-                <CameraConTest connectionType={CameraConnectionType.Cropping}/>
-                <CameraConTest connectionType={CameraConnectionType.Cropping}/>
-                <CameraConTest connectionType={CameraConnectionType.Cropping}/>
+                {#each Object.values(get(Cameras)) as camera}
+                {#if camera.isEnabled}
+                <CameraConTest camera={camera}>
+                    <div class="p-4 flex flex-col">
+                        <div class="text-lg font-bold">{camera.position} camera</div>
+                        <div class="py-2"></div>
+                        <div class="flex justify-end">
+                            <button class="btn btn-secondary btn-sm pr-1">Crop <Crop/></button>
+                        </div>
+                    </div>
+                </CameraConTest>
+                {/if}
+                {/each}
             </div>
             <div class="py-4"></div>
             <div class="p-4 overflow-hidden">

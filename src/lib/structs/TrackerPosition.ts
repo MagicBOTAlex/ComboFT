@@ -1,5 +1,5 @@
 export enum TrackerPosition {
-    Left = "Left Eye",
-    Right = "Right Eye",
-    Babble = "Mouth"
+    Left = "left",
+    Right = "right",
+    Babble = "mouth"
 }

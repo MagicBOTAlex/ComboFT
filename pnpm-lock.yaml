@@ -23,6 +23,9 @@ importers:
       lucide-svelte:
         specifier: ^0.479.0
         version: 0.479.0(svelte@5.22.6)
+      svelte-easy-crop:
+        specifier: ^4.0.0
+        version: 4.0.0(svelte@5.22.6)
       tailwindcss:
         specifier: ^4.0.12
         version: 4.0.12
@@ -736,6 +739,11 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
 
+  svelte-easy-crop@4.0.0:
+    resolution: {integrity: sha512-/asrrCYypXwCsPqJ07m7s7QArJwrdfEt7D1UN9hC4WF3GgEtuqmGuVi5DGeJVtBpKu5388gYFtCgQz9lA+/Rtg==}
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0
+
   svelte@5.22.6:
     resolution: {integrity: sha512-dxHyh3USJyayafSt5I5QD7KuoCM5ZGdIOtLQiKHEro7tymdh0jMcNkiSBVHW+LOA2jEqZEHhyfwN6/pCjx0Fug==}
     engines: {node: '>=18'}
@@ -1331,6 +1339,10 @@ snapshots:
       typescript: 5.6.3
     transitivePeerDependencies:
       - picomatch
+
+  svelte-easy-crop@4.0.0(svelte@5.22.6):
+    dependencies:
+      svelte: 5.22.6
 
   svelte@5.22.6:
     dependencies:

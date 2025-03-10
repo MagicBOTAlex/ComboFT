@@ -74,11 +74,11 @@
 
     function updateSourceType(sourceType: CameraSourceType) {
         updateCameraField("sourceType", sourceType);
-        updateCameraField("isEnabled", sourceType != CameraSourceType.None && selectedCameraAddress != "" && selectedCameraAddress != undefined);
     }
-
+    
     function setAddr(addr: string) {
         selectedCameraAddress = addr;
+        updateCameraField("isEnabled", selectedSourceType != CameraSourceType.None && addr != "" && addr != undefined);
         updateCameraField("addr", addr);
     }
 
@@ -195,7 +195,9 @@
                     if (e.key === "Enter") {
                         target.blur();
                     }
-                    setAddr(normalizeIP(target.value));
+                    setTimeout(() => {
+                        setAddr(normalizeIP(target.value));
+                    }, 10);
                 }}
                 on:paste={(e) => {
                     const target = e.target as HTMLInputElement;

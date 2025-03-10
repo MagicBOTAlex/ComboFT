@@ -8,8 +8,9 @@
     import { get } from "svelte/store";
     import { CameraStreamType } from "@src/lib/structs/CameraStreamType";
     import { Camera } from "lucide-svelte";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
+    import { ETVRStatus } from "@src/lib/structs/ETVRBackendStatus";
 
     async function onFinishClick(){
         const cameras_ = get(Cameras);
@@ -24,9 +25,22 @@
         goto('/setup/testing_con');
     }
 
+    const interval = setInterval(forceReload, 1000);
+    let isRunning: boolean = false; // Used to force reload this page
+
+    // Stop interval when component is destroyed
+    onDestroy(() => {
+        clearInterval(interval);
+    });
+
+    function forceReload(){
+        isRunning = ETVRController.status == ETVRStatus.Running;
+    }
+
 
     onMount(async () =>{
         ETVRController.Stop();
+        forceReload();
     });
 
     let enableBabble: boolean = false;
@@ -55,7 +69,13 @@
             </div>
             <div class="py-4"></div>
             <div class="p-4 overflow-hidden" >
-                <button on:click={onFinishClick} class="btn btn-primary w-full">Next</button>
+                <button on:click={onFinishClick} class="btn btn-primary w-full {isRunning ? "btn-disabled":""}">
+                    {#if isRunning}
+                        <div class="flex">Waiting for ETVR to shutdown... <span class="loading loading-spinner loading-md ml-2"></span></div>
+                    {:else}
+                    Next
+                    {/if}
+                </button>
             </div>
         </div>
     </div>

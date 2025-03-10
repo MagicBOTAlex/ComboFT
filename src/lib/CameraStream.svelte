@@ -27,7 +27,7 @@
     }
 
     onMount(async ()=> {
-        ETVRController.pushCameraAddr(camera!);
+        ETVRController.pushCameraAddr(camera);
         videoStreamSource = await ETVRController.getTrackingCameraStream(camera.position, CameraStreamType.Raw)
     });
 
