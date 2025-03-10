@@ -27,12 +27,23 @@
         goto('/setup/testing_con');
     }
 
-    const interval = setInterval(forceReload, 1000);
+    const shutdownInterval = setInterval(() => {
+        if (!isRunning) {
+            clearInterval(shutdownInterval);
+        } else {
+            ETVRController.Stop();
+        }
+    }, 500);
+
+    const forceReloadInterval = setInterval(forceReload, 1000);
     let isRunning: boolean = false; // Used to force reload this page
 
     // Stop interval when component is destroyed
     onDestroy(() => {
-        clearInterval(interval);
+        clearInterval(forceReloadInterval);
+        if (shutdownInterval) {
+            clearInterval(shutdownInterval);
+        }
     });
 
     function forceReload(){
@@ -43,24 +54,9 @@
     onMount(async () =>{
         await ETVRController.checkStatus();
         forceReload();
-        const interval = setInterval(() => {
-            if (!isRunning) {
-                clearInterval(interval);
-            } else {
-                ETVRController.Stop();
-            }
-        }, 500);
-
-        // Cleanup the interval when the component is unmounted
-        onCleanup(() => clearInterval(interval));
     });
 
     let enableBabble: boolean = false;
-
-
-    function onCleanup(arg0: () => void) {
-        throw new Error("Function not implemented.");
-    }
 </script>
 
 <Tabs enabled={["tab-active", "tab-disabled", "tab-disabled"]}/>

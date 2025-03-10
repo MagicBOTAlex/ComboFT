@@ -21,6 +21,10 @@
     async function loadSerialPorts(){
         serialPorts = await invoke("get_list_of_serial");
         console.log("Serial ports detected: " + serialPorts);
+
+        if (serialPorts.length == 1) {
+            setAddr(serialPorts[0]);
+        }
     }
 
     function onSourceChange(e: Event) {
@@ -31,6 +35,7 @@
             case "none":
                 console.log("No source selected.");
                 updateSourceType(CameraSourceType.None);
+                setAddr("");
                 break;
             case "http":
                 console.log("Using HTTP source.");

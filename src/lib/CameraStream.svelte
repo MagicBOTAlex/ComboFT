@@ -16,7 +16,7 @@
     let imageElement: HTMLImageElement;
 
 
-    const interval = setInterval(reloadStream, 500);
+    const interval = setInterval(reloadStream, 3000);
 
     // Stop interval when component is destroyed
     onDestroy(() => {
@@ -24,8 +24,8 @@
     });
 
     function reloadStream(){
-        if (imageElement.scrollHeight < 100)
-            timestamp = new Date().getTime();
+        // if (imageElement.scrollHeight < 100)
+        timestamp = new Date().getTime();
     }
 
     onMount(async ()=> {
