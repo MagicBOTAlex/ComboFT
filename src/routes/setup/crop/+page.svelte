@@ -22,12 +22,9 @@
                 {#each Object.values(get(Cameras)) as camera}
                 {#if camera.isEnabled}
                 <CameraConTest camera={camera}>
-                    <div class="p-4 flex flex-col">
+                    <div class="flex justify-between p-4">
                         <div class="text-lg font-bold">{camera.position} camera</div>
-                        <div class="py-2"></div>
-                        <div class="flex justify-end">
-                            <button class="btn btn-secondary btn-sm pr-1">Crop <Crop/></button>
-                        </div>
+                        <a href="/cropping?cam={camera.position}" class="btn btn-secondary btn-sm p-1"><Crop/></a>
                     </div>
                 </CameraConTest>
                 {/if}

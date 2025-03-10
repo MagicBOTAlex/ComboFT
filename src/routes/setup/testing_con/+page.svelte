@@ -13,7 +13,7 @@
         <div class="w-full px-26">
             <div class="px-4">
                 <div class="font-bold text-2xl">Testing connections</div>
-                <div>Check if all is correctly connected. <br> Go back if not connected.</div>
+                <div>Check if all is correctly connected.</div>
             </div>
             <div class="divider"></div>
             <div class="flex justify-center w-full gap-4">
@@ -21,7 +21,7 @@
                 {#if camera.isEnabled}
                 <CameraConTest camera={camera}>
                     <div class="p-4">
-                        <div class="text-lg font-bold">{camera.position} camera</div>
+                        <div class="text-lg font-bold">{camera.position.toLowerCase().charAt(0).toUpperCase() + camera.position.toLowerCase().slice(1)} camera</div>
                         <div class="text-sm">Source type: {camera.sourceType}</div>
                     </div>
                 </CameraConTest>

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@novacbn/svelte-image-crop':
+        specifier: github:novacbn/svelte-image-crop#0.0.2
+        version: https://codeload.github.com/novacbn/svelte-image-crop/tar.gz/c38f71975d329c51bdab5aae026c04287b101ebe
       '@tailwindcss/vite':
         specifier: ^4.0.12
         version: 4.0.12(vite@6.2.1(jiti@2.4.2)(lightningcss@1.29.2))
@@ -228,6 +231,11 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@novacbn/svelte-image-crop@https://codeload.github.com/novacbn/svelte-image-crop/tar.gz/c38f71975d329c51bdab5aae026c04287b101ebe':
+    resolution: {tarball: https://codeload.github.com/novacbn/svelte-image-crop/tar.gz/c38f71975d329c51bdab5aae026c04287b101ebe}
+    version: 0.0.2
+    engines: {node: '>= 12.17.0'}
 
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
@@ -913,6 +921,8 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@novacbn/svelte-image-crop@https://codeload.github.com/novacbn/svelte-image-crop/tar.gz/c38f71975d329c51bdab5aae026c04287b101ebe': {}
 
   '@polka/url@1.0.0-next.28': {}
 
