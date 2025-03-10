@@ -22,7 +22,7 @@
         serialPorts = await invoke("get_list_of_serial");
         console.log("Serial ports detected: " + serialPorts);
 
-        if (serialPorts.length == 1) {
+        if (serialPorts.length > 1) {
             setAddr(serialPorts[0]);
         }
     }
