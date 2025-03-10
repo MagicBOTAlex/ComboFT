@@ -23,7 +23,7 @@ export class ETVR_Controller {
         
 
 
-        setInterval(this.loop.bind(this), 5000); // Update status every x
+        setInterval(this.checkStatus.bind(this), 5000); // Update status every x
     }
 
     async start(){this.api.startETVR();}    
@@ -39,7 +39,7 @@ export class ETVR_Controller {
     }
 
     // Runs to check current status
-    public async loop(){ // No way!!! pulic too. This is just like C#
+    public async checkStatus(){ // No way!!! pulic too. This is just like C#
         let newStatus: boolean = await this.api.getETVRStatus();
         if (((newStatus) ? ETVRStatus.Running : ETVRStatus.Stopped) != this.status){
             Logger.log('info', (newStatus) ? "ETVR now running..." : "ETVR stopped.")

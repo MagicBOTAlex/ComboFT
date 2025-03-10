@@ -11,6 +11,8 @@
     import { onDestroy, onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
     import { ETVRStatus } from "@src/lib/structs/ETVRBackendStatus";
+    import EtvrControls from "@src/routes/tracking/comps/ETVRControls.svelte";
+    import { ETVR_Controller } from "@src/lib/ETVR_Controller";
 
     async function onFinishClick(){
         const cameras_ = get(Cameras);
@@ -39,11 +41,26 @@
 
 
     onMount(async () =>{
-        ETVRController.Stop();
+        await ETVRController.checkStatus();
         forceReload();
+        const interval = setInterval(() => {
+            if (!isRunning) {
+                clearInterval(interval);
+            } else {
+                ETVRController.Stop();
+            }
+        }, 500);
+
+        // Cleanup the interval when the component is unmounted
+        onCleanup(() => clearInterval(interval));
     });
 
     let enableBabble: boolean = false;
+
+
+    function onCleanup(arg0: () => void) {
+        throw new Error("Function not implemented.");
+    }
 </script>
 
 <Tabs enabled={["tab-active", "tab-disabled", "tab-disabled"]}/>

@@ -144,7 +144,9 @@
             <div class="py-4"></div>
             <div class="pb-2">Select Serial port:</div>
             <select
-                bind:value={selectedCameraAddress}
+                on:select={()=> {setTimeout(() => {
+                    setAddr(serialSelector.value);
+                }, 10);}}
                 bind:this={serialSelector}
                 class="select select-primary text-base-content"
             >
