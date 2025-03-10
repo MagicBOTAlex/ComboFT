@@ -27,7 +27,7 @@
         goto('/setup/testing_con');
     }
 
-    const forceReloadInterval = setInterval(forceReload, 1000);
+    const forceReloadInterval = setInterval(forceReload, 3000);
     let isRunning: boolean = false; // Used to force reload this page
 
     // Stop interval when component is destroyed

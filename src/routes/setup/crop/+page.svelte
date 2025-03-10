@@ -8,6 +8,7 @@
     import { get } from "svelte/store";
     import { Crop } from "lucide-svelte";
     import { CroppingSender } from "@src/lib/structs/CroppingSender";
+    import { CameraStreamType } from "@src/lib/structs/CameraStreamType";
 </script>
 
 <Tabs enabled={["", "", "tab-active"]}/>
@@ -22,7 +23,7 @@
             <div class="flex justify-center w-full gap-4">
                 {#each Object.values(get(Cameras)) as camera}
                 {#if camera.isEnabled}
-                <CameraConTest camera={camera}>
+                <CameraConTest streamType={CameraStreamType.Algorithmed} camera={camera}>
                     <div class="flex justify-between p-4">
                         <div class="text-lg font-bold">{camera.position} camera</div>
                         <a href="/cropping?cam={camera.position}&sender={CroppingSender.Setup}" class="btn btn-secondary btn-sm p-1"><Crop/></a>
