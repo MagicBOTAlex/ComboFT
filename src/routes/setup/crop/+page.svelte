@@ -7,6 +7,7 @@
     import { Cameras } from "@src/store";
     import { get } from "svelte/store";
     import { Crop } from "lucide-svelte";
+    import { CroppingSender } from "@src/lib/structs/CroppingSender";
 </script>
 
 <Tabs enabled={["", "", "tab-active"]}/>
@@ -24,7 +25,7 @@
                 <CameraConTest camera={camera}>
                     <div class="flex justify-between p-4">
                         <div class="text-lg font-bold">{camera.position} camera</div>
-                        <a href="/cropping?cam={camera.position}" class="btn btn-secondary btn-sm p-1"><Crop/></a>
+                        <a href="/cropping?cam={camera.position}&sender={CroppingSender.Setup}" class="btn btn-secondary btn-sm p-1"><Crop/></a>
                     </div>
                 </CameraConTest>
                 {/if}

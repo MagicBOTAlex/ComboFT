@@ -10,6 +10,7 @@
 
     export let camera: Camera;
     export let cameraRotation: number = 0;
+    export let streamType: CameraStreamType = CameraStreamType.Raw;
 
 
     onMount(async ()=> {
@@ -21,7 +22,7 @@
 
 <div class="">
     <div class="bg-base-200 rounded-t-lg object-fit w-48 h-48 overflow-hidden shadow-xl">
-        <CameraStream {camera} />
+        <CameraStream {streamType} {camera} />
     </div>
     <div class="bg-base-200 rounded-b-lg">
         <slot></slot>

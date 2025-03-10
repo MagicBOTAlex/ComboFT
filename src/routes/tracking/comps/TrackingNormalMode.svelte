@@ -5,13 +5,14 @@
     import { get } from "svelte/store";
     import { ZoomIn } from "lucide-svelte";
     import EtvrControls from "./ETVRControls.svelte";
+    import { CameraStreamType } from "@src/lib/structs/CameraStreamType";
 </script>
 
 <div class="flex flex-col h-full w-full justify-center place-items-center gap-4">
     <div class="flex justify-center w-full gap-4 mt-auto">
         {#each Object.values(get(Cameras)) as camera}
         {#if camera.isEnabled}
-        <CameraConnection camera={camera}>
+        <CameraConnection streamType={CameraStreamType.Algorithmed} camera={camera}>
             <div class="p-4">
                 
                 <div class="flex justify-between place-items-center">
