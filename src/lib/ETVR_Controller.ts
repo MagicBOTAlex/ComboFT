@@ -27,7 +27,15 @@ export class ETVR_Controller {
     }
 
     async start(){this.api.startETVR();}    
-    async Stop(){this.api.stopETVR();}
+    async Stop(){this.api.stopETVR();
+        const shutdownInterval = setInterval(() => {
+            if (this.status == ETVRStatus.Running) {
+                this.api.stopETVR();
+            } else {
+                clearInterval(shutdownInterval);
+            }
+        }, 500);
+    }
     async Reset(){this.api.restartETVR();}
     async quit(){this.api.shutdownETVR(); this.status = ETVRStatus.Quit;}
 

@@ -27,33 +27,26 @@
         goto('/setup/testing_con');
     }
 
-    const shutdownInterval = setInterval(() => {
-        if (!isRunning) {
-            clearInterval(shutdownInterval);
-        } else {
-            ETVRController.Stop();
-        }
-    }, 500);
-
     const forceReloadInterval = setInterval(forceReload, 1000);
     let isRunning: boolean = false; // Used to force reload this page
 
     // Stop interval when component is destroyed
     onDestroy(() => {
         clearInterval(forceReloadInterval);
-        if (shutdownInterval) {
-            clearInterval(shutdownInterval);
-        }
     });
 
     function forceReload(){
         isRunning = ETVRController.status == ETVRStatus.Running;
+        if (isRunning){
+            ETVRController.Stop(); // I REALLY WANT IT TO STOP!!!
+        }
     }
 
 
     onMount(async () =>{
         await ETVRController.checkStatus();
         forceReload();
+        ETVRController.Stop();
     });
 
     let enableBabble: boolean = false;
