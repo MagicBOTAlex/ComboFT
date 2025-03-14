@@ -10,6 +10,26 @@ This is how i run the UI. There definitely exists a better way.
 - Rust
 - Node?
 
+## Linux Mint
+```
+sudo apt update
+sudo apt install libwebkit2gtk-4.1-dev \
+  build-essential \
+  curl \
+  wget \
+  file \
+  libxdo-dev \
+  libssl-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev
+```
+Then continue with the commands below.
+
+## Windows
+Check: https://v2.tauri.app/start/prerequisites/#windows \
+Then continue with the commands below.
+
+
 ### Download
 ```
 git clone --recurse-submodules https://github.com/MagicBOTAlex/learningTauri.git
