@@ -3,16 +3,18 @@ Didn't plan on making this for ETVR, but now it is.
 # How to run
 This is how i run the UI. There definitely exists a better way.
 ### Requirements
-- Python
+- Python (for back-end)
 - MiniConda (for back-end)
+- Poetry (for back-end)
 - pnpm
 - Node?
 
 ### Download
 ```
 git clone --recurse-submodules https://github.com/MagicBOTAlex/learningTauri.git
+cd learningTauri
+git submodule add https://github.com/MagicBOTAlex/ETVR-Backend.git ETVR-Backend
 conda env create -f environment.yml
-conda activate etvr
 ```
 #### Run
 Use 2 consoles. 
@@ -24,7 +26,9 @@ pnpm tauri dev
 Second back-end
 ```
 conda activate etvr
-python ./ETVR-Backend/build.py run
+poetry -C ./ETVR-Backend install --no-root
+cd ETVR-Backend
+python build.py run
 ```
 
 ### Update
