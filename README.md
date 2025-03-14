@@ -15,6 +15,8 @@ This is how i run the UI. There definitely exists a better way.
 git clone --recurse-submodules https://github.com/MagicBOTAlex/learningTauri.git
 cd learningTauri
 git submodule add https://github.com/MagicBOTAlex/ETVR-Backend.git ETVR-Backend
+
+:: i exported the wrong environment, so this is wrong. ill fix it later
 conda env create -f environment.yml
 ```
 #### Run
