@@ -16,17 +16,11 @@
     let imageElement: HTMLImageElement;
 
 
-    const interval = setInterval(reloadStream, 3000); // Probs a better way like using js to get blobs. but works for now
-
-    // Stop interval when component is destroyed
-    onDestroy(() => {
-        clearInterval(interval);
-        imageElement.src = "";
-    });
-
+    const interval = setInterval(reloadStream, 500); // Probs a better way like using js to get blobs. but works for now
     function reloadStream(){
-        // if (imageElement.scrollHeight < 100)
-        timestamp = new Date().getTime();
+        console.log(imageElement.naturalHeight);
+        if (imageElement.naturalHeight < 100)
+            timestamp = new Date().getTime();
     }
 
     onMount(async ()=> {
@@ -34,7 +28,11 @@
         videoStreamSource = await ETVRController.getTrackingCameraStream(camera.position, streamType)
     });
 
-    // This is sooo ass, but this is only going to be used during front-end
+    // Stop interval when component is destroyed
+    onDestroy(() => {
+        clearInterval(interval);
+        imageElement.src = "";
+    });
 </script>
 
 <img bind:this={imageElement} src="{videoStreamSource + "?t=" + timestamp}" class="w-full h-full object-contain " style="transform: rotate({cameraRotation}deg);" alt="cam stream">
