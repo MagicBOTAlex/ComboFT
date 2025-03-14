@@ -7,6 +7,7 @@ This is how i run the UI. There definitely exists a better way.
 - MiniConda (for back-end)
 - Poetry (for back-end)
 - pnpm
+- Rust
 - Node?
 
 ### Download
