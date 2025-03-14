@@ -1,12 +1,37 @@
-![zesty-sonic-zesty](https://github.com/user-attachments/assets/df027ca6-bc6f-4ee3-9b45-afe53caecd51)
-Didn't plan on making this for ETVR, but now it is. That GIF is staying there for a while.
+Didn't plan on making this for ETVR, but now it is.
 
 # How to run
 This is how i run the UI. There definitely exists a better way.
 ### Requirements
 - Python
-- MiniConda
+- MiniConda (for back-end)
 - pnpm
 - Node?
 
 ### Download
+```
+git clone --recurse-submodules https://github.com/MagicBOTAlex/learningTauri.git
+conda env create -f environment.yml
+conda activate etvr
+```
+#### Run
+Use 2 consoles. 
+First tauri
+```
+pnpm install
+pnpm tauri dev
+```
+Second back-end
+```
+conda activate etvr
+python ./ETVR-Backend/build.py run
+```
+
+### Update
+```
+git fetch
+git submodule update --init --recursive
+```
+
+
+![dragon-ball-goku](https://github.com/user-attachments/assets/60984fb0-7a5c-4335-bc15-998c5a0d8c22)
