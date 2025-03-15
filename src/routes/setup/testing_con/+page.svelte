@@ -13,7 +13,7 @@
         <div class="w-full px-26">
             <div class="px-4">
                 <div class="font-bold text-2xl">Testing connections</div>
-                <div>Check if all is correctly connected.</div>
+                <div>Check if all is correctly connected. (Wait 10 seconds)</div>
             </div>
             <div class="divider"></div>
             <div class="flex justify-center w-full gap-4">

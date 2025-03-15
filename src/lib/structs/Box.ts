@@ -10,4 +10,8 @@ export class Box {
         this.w = Math.trunc(Number(w));
         this.h = Math.trunc(Number(h));
     }
+
+    public isValid(): boolean {
+        return this.x >= 0 && this.y >= 0 && this.w >= 0 && this.h >= 0;
+    }
 }

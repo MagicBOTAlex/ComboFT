@@ -18,13 +18,9 @@
     let cropSet: boolean = false;
 
     let croppingCam: Camera | undefined;
-    let videoStreamSource: string = "";
 
     onMount(async ()=>{
         croppingCam = get(Cameras)[cam as TrackerPosition];
-
-        ETVRController.pushCameraAddr(croppingCam);
-        videoStreamSource = await ETVRController.getTrackingCameraStream(croppingCam.position, CameraStreamType.Raw)
     });
 
     function onFinishCropping(finalBox: Box) {
@@ -54,7 +50,9 @@
         <div class="divider -mx-20"></div>
         <div class="p-4 bg-base-200 rounded-lg">
             <div class="w-80 h-80">
-                <Cropper {onFinishCropping} imageSrc={videoStreamSource + "?t=" + timestamp}/>
+                {#if croppingCam}
+                    <Cropper {onFinishCropping} camera={croppingCam}/>
+                {/if}
             </div>
         </div>
         <div class="mt-10">

@@ -138,13 +138,25 @@ export class ETVR_Controller {
         if (!this.UUIDs[position]) await this.getTrackingCameraStream(position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad.
         if (this.UUIDs[position] == undefined) return;
         let uuid: string = this.UUIDs[position]!;
-        this.api.updateTracker(uuid, {
-            "camera": {
-                "roi_x": croppingBox.x,
-                "roi_y": croppingBox.y,
-                "roi_w": croppingBox.w,
-                "roi_h": croppingBox.h
-            }
-        });
+        if (croppingBox.isValid()){
+            this.api.updateTracker(uuid, {
+                "camera": {
+                    "roi_x": croppingBox.x,
+                    "roi_y": croppingBox.y,
+                    "roi_w": croppingBox.w,
+                    "roi_h": croppingBox.h
+                }
+            });
+        } else {
+            Logger.log('warn', "Invalid crop box detected. resetting crop");
+            this.api.updateTracker(uuid, {
+                "camera": {
+                    "roi_x": null,
+                    "roi_y": null,
+                    "roi_w": null,
+                    "roi_h": null
+                }
+            });
+        }
     }
 }

@@ -1,11 +1,13 @@
 <script lang="ts">
+    import CameraStream from "@src/lib/CameraStream.svelte";
     import { Box } from "@src/lib/structs/Box";
+    import type { Camera } from "@src/lib/structs/Camera";
     import { onMount } from "svelte";
 
     // TODO: Add pausing.
 
-    export let imageSrc: string;
     export let onFinishCropping: (finalBox: Box) => void | undefined;
+    export let camera: Camera;
 
   
     let image: HTMLImageElement;
@@ -93,15 +95,13 @@
   <div class="relative inline-block w-full h-full">
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <!-- svelte-ignore a11y_img_redundant_alt -->
-    <img
-      bind:this={image}
-      src="{imageSrc}"
-      alt=""
-      class="select-none pointer-events-auto w-full h-full"
-      on:mousedown={handleMouseDown}
-      on:mousemove={handleMouseMove}
-      on:mouseup={handleMouseUp}
-      on:mouseleave={handleMouseUp}
+    <CameraStream
+      bind:imageElement={image}
+      camera={camera}
+      mousedown={handleMouseDown}
+      mousemove={handleMouseMove}
+      mouseup={handleMouseUp}
+      mouseleave={handleMouseUp}
     />
   
     {#if isSelecting && hasMoved}
