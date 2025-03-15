@@ -11,10 +11,10 @@
     export let cameraRotation: number = 0;
     export let streamType: CameraStreamType = CameraStreamType.Raw;
     export let imageElement: HTMLImageElement | undefined = undefined;
-    export let mousedown;
-    export let mousemove;
-    export let mouseup;
-    export let mouseleave;
+    export let mousedown: ((e: MouseEvent) => void) | undefined = undefined;
+    export let mousemove: ((e: MouseEvent) => void) | undefined = undefined;
+    export let mouseup: ((e: MouseEvent) => void) | undefined = undefined;
+    export let mouseleave: ((e: MouseEvent) => void) | undefined = undefined;
 
     let videoStreamSource: string = "";
     let timestamp: number = 0;
@@ -52,10 +52,10 @@
     <div class="{loading?"w-16 h-16 loading loading-spinner bg-base-300":"hidden"}"></div>
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <img bind:this={imageElement} src="{videoStreamSource + "?t=" + timestamp}" class="w-full h-full object-contain {loading?"hidden":""}" style="transform: rotate({cameraRotation}deg);" alt="cam stream"
-    on:mousedown={mousedown}
-    on:mousemove={mousemove}
-    on:mouseup={mouseup}
-    on:mouseleave={mouseleave}
+    on:mousedown={(e)=>{if(mousedown){mousedown(e)}}}
+    on:mousemove={(e)=>{if(mousemove){mousemove(e)}}}
+    on:mouseup={(e)=>{if(mouseup){mouseup(e)}}}
+    on:mouseleave={(e)=>{if(mouseleave){mouseleave(e)}}}
     on:loadeddata={()=>{
         loading = true; // If loaded, then it was cached. Which is not good
         timestamp = new Date().getTime();
