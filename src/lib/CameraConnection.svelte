@@ -20,11 +20,34 @@
     // This is sooo ass, but this is only going to be used during front-end
 </script>
 
-<div class="">
-    <div class="bg-base-200 rounded-t-lg object-fit w-48 h-48 overflow-hidden shadow-xl">
-        <CameraStream {streamType} {camera} />
+<div class="rounded-t-lg">
+    <div class="relative grid place-items-center w-full rounded-t-lg border-2 border-b-0 border-base-200">
+        <div class="relative w-48 h-48 rounded-t-lg bg-grid">
+        </div>
+        <div class="absolute top-0 bottom-0 object-fit rounded-t-lg overflow-hidden shadow-xl">
+            <CameraStream {streamType} {camera} />
+        </div>
     </div>
     <div class="bg-base-200 rounded-b-lg">
         <slot></slot>
     </div>
 </div>
+
+<style>
+    .bg-grid {
+        background:
+            linear-gradient(-90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+            #f2f2f2;
+        background-size:
+            4px 4px,
+            4px 4px,
+            80px 80px,
+            80px 80px,
+            80px 80px,
+            80px 80px,
+            80px 80px,
+            80px 80px;
+        background-color: var(--color-base-100);
+    }
+</style>
