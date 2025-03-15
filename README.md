@@ -36,7 +36,7 @@ git clone --recurse-submodules https://github.com/MagicBOTAlex/learningTauri.git
 cd learningTauri
 git submodule add https://github.com/MagicBOTAlex/ETVR-Backend.git ETVR-Backend
 
-:: i exported the wrong environment, so this is wrong. ill fix it later
+:: You can either use conda or poetry, but I use conda on my Windows, and I use poetry on my Linux mint
 conda env create -f environment.yml
 ```
 #### Run
@@ -46,9 +46,10 @@ First tauri
 pnpm install
 pnpm tauri dev
 ```
-Second back-end
+back-end:
 ```
 conda activate etvr
+:: or
 poetry -C ./ETVR-Backend install --no-root
 cd ETVR-Backend
 python build.py run
