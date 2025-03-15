@@ -4,8 +4,7 @@ Didn't plan on making this for ETVR, but now it is.
 This is how i run the UI. There definitely exists a better way.
 ### Requirements
 - Python (for back-end)
-- MiniConda (for back-end)
-- Poetry (for back-end)
+- MiniConda or poetry (for back-end)
 - pnpm
 - Rust
 - Node?
