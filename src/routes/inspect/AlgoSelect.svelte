@@ -1,6 +1,6 @@
 <script lang="ts">
     import { ET_Algorithm as ET_Algorithm } from "@src/lib/structs/ET_Algorithm";
-    import { ArrowDownAZ, GripVertical, Settings, X } from "lucide-svelte";
+    import { ArrowDownAZ, ArrowRight, GripVertical, Info, Plus, Settings, X } from "lucide-svelte";
     import { onMount, tick, type Snippet } from "svelte";
     import BlobSettings from "./AlgoSettingsContent/BlobSettings.svelte";
     import HsfSettings from "./AlgoSettingsContent/HsfSettings.svelte";
@@ -10,7 +10,7 @@
     let list: HTMLUListElement;
     let draggedItem: HTMLLIElement | null = null;
 
-    let algos = [
+    let initialAlgos = [ // What the algorithems the user has enabled right now
         ET_Algorithm.LEAP,
         ET_Algorithm.BLOB,
         ET_Algorithm.HSRAC,
@@ -18,6 +18,7 @@
         ET_Algorithm.HSF,
         ET_Algorithm.AHSF
     ];
+    let modifiedAlgos: ET_Algorithm[] = initialAlgos; // What the algorithems the user will change to  
 
     const algoSettingsSnippits: Record<ET_Algorithm, Snippet | undefined> = {
         [ET_Algorithm.LEAP]: undefined,
@@ -27,6 +28,19 @@
         [ET_Algorithm.HSF]: RansacSettings_snip,
         [ET_Algorithm.AHSF]: undefined
     };
+
+    async function updateAlgosArr(){
+        let liAlgos = list.querySelectorAll("li");
+        modifiedAlgos = [];
+        for (let i = 0; i < liAlgos.length; i++) {
+            const liAlgo = liAlgos[i];
+            if (!liAlgo) continue;
+
+            const dataAlgo: string = liAlgo.dataset.algo || '';
+            modifiedAlgos.push(dataAlgo as ET_Algorithm);
+        }
+        console.log(modifiedAlgos);
+    }
 
 
     // Record positions of all list items within the container.
@@ -90,54 +104,45 @@
     }
 
     onMount(() => {
-        // Attach event listeners to all <li> elements.
-        list.querySelectorAll("li").forEach((item: Element) => {
-            const li = item as HTMLLIElement;
-            li.draggable = true;
-            li.addEventListener("dragstart", (e: DragEvent) => {
-                draggedItem = li;
-                li.classList.add("dragging", "opacity-50", "scale-105");
-                if (e.dataTransfer) {
-                    e.dataTransfer.effectAllowed = "move";
-                    // Some browsers require data to be set for drop to work.
-                    e.dataTransfer.setData("text/plain", "");
-                }
-            });
 
-            li.addEventListener("dragend", () => {
-                if (draggedItem) {
-                    draggedItem.classList.remove(
-                        "dragging",
-                        "opacity-50",
-                        "scale-105",
-                    );
-                }
-                draggedItem = null;
-            });
-        });
-
-        // Attach listeners to the list container.
-        list.addEventListener("dragover", (e: DragEvent) => {
-            e.preventDefault();
-            if (e.dataTransfer) {
-                e.dataTransfer.dropEffect = "move";
-            }
-            const oldPositions = recordPositions(list);
-            const afterElement = getDragAfterElement(list, e.clientY);
-            if (draggedItem) {
-                if (afterElement === null) {
-                    list.appendChild(draggedItem);
-                } else {
-                    list.insertBefore(draggedItem, afterElement);
-                }
-            }
-            animateListReorder(list, oldPositions);
-        });
-
-        list.addEventListener("drop", (e: DragEvent) => {
-            e.preventDefault();
-        });
     });
+
+    async function onDragEnd(){
+        if (draggedItem) {
+            draggedItem.classList.remove(
+                "dragging",
+                "opacity-50",
+                "scale-105",
+            );
+        }
+        draggedItem = null;
+        await tick();
+        updateAlgosArr();
+    }
+
+    async function onDragOver(e: DragEvent) {
+        e.preventDefault();
+        const oldPositions = recordPositions(list);
+        const afterElement = getDragAfterElement(list, e.clientY);
+        if (draggedItem) {
+            if (afterElement === null) {
+                list.appendChild(draggedItem);
+            } else {
+                list.insertBefore(draggedItem, afterElement);
+            }
+        }
+        animateListReorder(list, oldPositions);
+    }
+
+    async function onDragStart(e: DragEvent) {
+        if (!e) return;
+
+        const target = e.target as HTMLLIElement;
+        if (!target) return;
+
+        draggedItem = target;
+        draggedItem.classList.add("dragging", "opacity-50", "scale-105");
+    }
 
     let selectedAlgoSettings: ET_Algorithm | undefined = undefined;
     let showSettingsModal = false;
@@ -173,25 +178,38 @@
 
 
 
-    <div class="row-span-full row-start-2">
-        {#each algos as algo}
-        <div>
+    <div class="row-span-full row-start-2 gap-2 flex flex-col">
+        {#each Object.values(ET_Algorithm) as algo}
+        <div class="flex place-content-center">
             <div>{algo}</div>
+            <div class="ml-auto"></div>
+            <div class="tooltip" data-tip="hello">
+                <button class="p-0"><Info class="p-1 text-info"/></button>
+            </div>
+            <button class="btn btn-soft btn-success btn-xs p-0 {modifiedAlgos.indexOf(algo as ET_Algorithm) != -1 ?"btn-disabled":""}"><Plus/></button>
         </div>
         {/each}
     </div>
-    <div class="row-span-full row-start-2">
+
+
+    <div class="row-span-full row-start-2 p-2 pl-4 border-l-2 border-base-200">
         <ul bind:this={list} class="flex flex-col w-full gap-2">
-            {#each algos as algo}
-            <li class="w-full flex cursor-pointer rounded-lg border border-base-300 transition-transform duration-300">
-                <div class="border-r border-base-300 text-base-300">
+            {#each initialAlgos as algo}
+            <li class="w-full flex cursor-pointer rounded-lg border border-base-300 transition-transform duration-300"
+            draggable="true"
+            data-algo="{algo}"
+            on:dragstart={onDragStart}
+            on:dragover={onDragOver}
+            on:dragend={onDragEnd}
+            on:drop|preventDefault>
+                <div class="border-r border-dashed border-base-300 text-base-300">
                     <GripVertical/>
                 </div>
                 <div class="pl-2 w-full">
                     <div class="text-base-content opacity-80">{algo}</div>
                 </div>
                 <div class="flex">
-                    <button class="p-0 btn-ghost cursor-pointer"><X class="p-0.5"/></button>
+                    <button class="p-0 btn-ghost cursor-pointer hover:text-error transition-colors"><X class="p-0.5"/></button>
                     <div class="-ml-1.5"></div>
                     <button class="p-0 btn-ghost {algoSettingsSnippits[algo]? "cursor-pointer": "opacity-30"}"
                     on:click={()=>{openAlgoSettings(algo)}}>
