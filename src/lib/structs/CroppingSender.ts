@@ -2,5 +2,6 @@
 
 export enum CroppingSender{
     Setup = "/setup/crop",
-    Tracking = "/tracking"
+    Tracking = "/tracking",
+    Inspector = "/inspect",
 }

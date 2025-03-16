@@ -53,7 +53,7 @@
 
 
         <div class="flex mt-auto justify-end">
-            <a href="/inspect/{camera.position}"><LucideSettings/></a>
+            <a href="/inspect?cam={camera.position}"><LucideSettings/></a>
         </div>
     </div>
 {/snippet}

@@ -2,7 +2,7 @@ import { ETVRApi} from "./ETVR_API";
 import { Logger } from "./Logger";
 import type { Box } from "./structs/Box";
 import type { Camera } from "./structs/Camera";
-import { CameraStreamType } from "./structs/CameraStreamType";
+import { CameraStreamType, getStreamTypeAPIName } from "./structs/CameraStreamType";
 import { ETVRStatus } from "./structs/ETVRBackendStatus";
 import type { ETVRConfig, Tracker as TrackerConfig } from "./structs/ETVRConfig";
 import  { TrackerPosition } from "./structs/TrackerPosition";
@@ -63,8 +63,9 @@ export class ETVR_Controller {
             if (!trackerConf) return "";
             this.UUIDs[trackingCam] = trackerConf.uuid;
         }
+        let streamAPIName = getStreamTypeAPIName(streamType);
 
-        return `${this.api.baseURL}/etvr/feed/${this.UUIDs[trackingCam]}/${streamType}`;
+        return `${this.api.baseURL}/etvr/feed/${this.UUIDs[trackingCam]}/${streamAPIName}`;
     }
 
     public async getETVRName(position: TrackerPosition): Promise<string>{

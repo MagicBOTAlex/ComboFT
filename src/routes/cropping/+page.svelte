@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from '$app/state';
     import CameraStream from '@src/lib/CameraSvelteComponents/CameraStream.svelte';
-    import type { Camera } from '@src/lib/structs/Camera';
+    import { Camera } from '@src/lib/structs/Camera';
     import { stringToTrackerPosition, TrackerPosition } from '@src/lib/structs/TrackerPosition';
     import { Cameras, ETVRController } from '@src/store';
     import { onMount } from 'svelte';
@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="mt-10">
-            <a href="{sender}" class="btn btn-primary {cropSet?"": "btn-disabled"} w-full">Done</a>
+            <a href="{sender}?cam={croppingCam?.position}" class="btn btn-primary {cropSet?"": "btn-disabled"} w-full">Done</a>
         </div>
     </div>
 </div>

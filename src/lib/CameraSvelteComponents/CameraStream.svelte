@@ -7,7 +7,7 @@
     import { CameraStreamType } from "../structs/CameraStreamType";
     import type { Camera } from "../structs/Camera";
 
-    export let camera: Camera;
+    export let camera: Camera | undefined;
     export let cameraRotation: number = 0;
     export let streamType: CameraStreamType = CameraStreamType.Raw;
     export let imageElement: HTMLImageElement | undefined = undefined;
@@ -24,7 +24,7 @@
     const interval = setInterval(reloadStream, 500); // Probs a better way like using js to get blobs. but works for now
     function reloadStream(){
         // console.log(imageElement!.naturalHeight);
-        if (imageElement) {
+        if (imageElement && camera) {
             if (imageElement.naturalHeight <= 0){
                 // Not loaded
                 timestamp = new Date().getTime();
@@ -36,11 +36,22 @@
         }
     }
 
+    async function updateCameraSrc() {
+        if (camera){
+            videoStreamSource = await ETVRController.getTrackingCameraStream(camera.position, streamType)
+            timestamp = new Date().getTime(); // Prevents loading anything cached
+        }
+        // console.log(streamType);
+    }
+
     onMount(async ()=> {
         // ETVRController.pushCameraAddr(camera);
-        videoStreamSource = await ETVRController.getTrackingCameraStream(camera.position, streamType)
-        timestamp = new Date().getTime(); // Prevents loading anything cached
+        await updateCameraSrc();
     });
+
+    $: setTimeout(() => {
+        updateCameraSrc();
+    }, 100);;
 
     // Stop interval when component is destroyed
     onDestroy(() => {
