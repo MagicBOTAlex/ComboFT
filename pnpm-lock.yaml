@@ -20,9 +20,6 @@ importers:
       '@tauri-apps/plugin-opener':
         specifier: ^2
         version: 2.2.6
-      daisyui:
-        specifier: ^5.0.0
-        version: 5.0.0
       lucide-svelte:
         specifier: ^0.479.0
         version: 0.479.0(svelte@5.22.6)
@@ -45,6 +42,9 @@ importers:
       '@tauri-apps/cli':
         specifier: ^2
         version: 2.3.1
+      daisyui:
+        specifier: ^5.0.4
+        version: 5.0.4
       svelte:
         specifier: ^5.0.0
         version: 5.22.6
@@ -549,8 +549,8 @@ packages:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
-  daisyui@5.0.0:
-    resolution: {integrity: sha512-U0K9Bac3Bi3zZGm6ojrw12F0vBHTpEgf46zv/BYxLe07hF0Xnx7emIQliwaRBgJuYhY0BhwQ6wSnq5cJXHA2yA==}
+  daisyui@5.0.4:
+    resolution: {integrity: sha512-9X3oX/k9hPBCslAECk8kYfvwgrz6Grs0lN7VI0/ZTM/hUfq1uFREHxCcBCCq0QROpN183N19B1hTNRWGipO2Eg==}
 
   debug@4.4.0:
     resolution: {integrity: sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==}
@@ -1158,7 +1158,7 @@ snapshots:
 
   cookie@0.6.0: {}
 
-  daisyui@5.0.0: {}
+  daisyui@5.0.4: {}
 
   debug@4.4.0:
     dependencies:

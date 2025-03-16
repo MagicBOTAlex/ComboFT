@@ -1,7 +1,7 @@
 <script>
 
-    import CameraConnection from "../../../lib/CameraConnection.svelte";
-    import { CameraConnectionType } from "../../../lib/CameraConnectionType";
+    import CameraConnection from "../../../lib/CameraSvelteComponents/CameraConnection.svelte";
+    import { CameraConnectionType } from "../../../lib/CameraSvelteComponents/CameraConnectionType";
 
 </script>
 <div class="flex h-full max-xl:h-[89vh]">

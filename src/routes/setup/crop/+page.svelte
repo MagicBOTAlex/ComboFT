@@ -1,9 +1,9 @@
 <script lang="ts">
     import {fly, slide} from "svelte/transition";
     import Tabs from "../comps/tabs.svelte";
-    import CameraConTest from "../../../lib/CameraConnection.svelte";
-    import { CameraConnectionType } from "../../../lib/CameraConnectionType";
-    import CameraConnection from "../../../lib/CameraConnection.svelte";
+    import CameraConTest from "../../../lib/CameraSvelteComponents/CameraConnection.svelte";
+    import { CameraConnectionType } from "../../../lib/CameraSvelteComponents/CameraConnectionType";
+    import CameraConnection from "../../../lib/CameraSvelteComponents/CameraConnection.svelte";
     import { Cameras } from "@src/store";
     import { get } from "svelte/store";
     import { Crop } from "lucide-svelte";

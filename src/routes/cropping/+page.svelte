@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from '$app/state';
-    import CameraStream from '@src/lib/CameraStream.svelte';
+    import CameraStream from '@src/lib/CameraSvelteComponents/CameraStream.svelte';
     import type { Camera } from '@src/lib/structs/Camera';
     import { stringToTrackerPosition, TrackerPosition } from '@src/lib/structs/TrackerPosition';
     import { Cameras, ETVRController } from '@src/store';

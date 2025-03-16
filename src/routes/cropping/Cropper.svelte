@@ -1,5 +1,5 @@
 <script lang="ts">
-    import CameraStream from "@src/lib/CameraStream.svelte";
+    import CameraStream from "@src/lib/CameraSvelteComponents/CameraStream.svelte";
     import { Box } from "@src/lib/structs/Box";
     import type { Camera } from "@src/lib/structs/Camera";
     import { onMount } from "svelte";

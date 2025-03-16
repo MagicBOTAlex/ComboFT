@@ -1,7 +1,7 @@
 <script lang="ts">
     import {fly, slide} from "svelte/transition";
     import Tabs from "../comps/tabs.svelte";
-    import CameraConTest from "../../../lib/CameraConnection.svelte";
+    import CameraConTest from "../../../lib/CameraSvelteComponents/CameraConnection.svelte";
     import { TrackerPosition } from "@src/lib/structs/TrackerPosition";
     import { get } from "svelte/store";
     import { Cameras } from "@src/store";

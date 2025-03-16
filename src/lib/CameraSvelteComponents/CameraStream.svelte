@@ -1,11 +1,11 @@
 <script lang="ts">
     import { CameraConnectionType } from "./CameraConnectionType";
-    import { TrackerPosition } from "./structs/TrackerPosition";
+    import { TrackerPosition } from "../structs/TrackerPosition";
     import { get } from "svelte/store";
     import { Cameras, ETVRController } from "@src/store";
     import { onMount, onDestroy } from "svelte";
-    import { CameraStreamType } from "./structs/CameraStreamType";
-    import type { Camera } from "./structs/Camera";
+    import { CameraStreamType } from "../structs/CameraStreamType";
+    import type { Camera } from "../structs/Camera";
 
     export let camera: Camera;
     export let cameraRotation: number = 0;
@@ -24,13 +24,15 @@
     const interval = setInterval(reloadStream, 500); // Probs a better way like using js to get blobs. but works for now
     function reloadStream(){
         // console.log(imageElement!.naturalHeight);
-        if (imageElement!.naturalHeight <= 0){
-            // Not loaded
-            timestamp = new Date().getTime();
-            loading = true;
-        } else {
-            // Image loaded
-            loading = false;
+        if (imageElement) {
+            if (imageElement.naturalHeight <= 0){
+                // Not loaded
+                timestamp = new Date().getTime();
+                loading = true;
+            } else {
+                // Image loaded
+                loading = false;
+            }
         }
     }
 

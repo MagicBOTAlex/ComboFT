@@ -1,5 +1,5 @@
 <script lang="ts">
-    import CameraConnection from "../../lib/CameraConnection.svelte";
+    import CameraConnection from "../../lib/CameraSvelteComponents/CameraConnection.svelte";
     import TrackingInspectMode from "./comps/TrackingInspectMode.svelte";
     import TrackingNormalMode from "./comps/TrackingNormalMode.svelte";
 
