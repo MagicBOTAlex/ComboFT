@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { EllipsisVertical, LucideSettings, ZoomIn  } from "lucide-svelte";
+    import { ChevronLeftIcon, EllipsisVertical, LucideSettings, ZoomIn  } from "lucide-svelte";
     import type { Camera } from "../structs/Camera";
     import { CameraStreamType } from "../structs/CameraStreamType";
     import CameraConnection from "./CameraConnection.svelte";
@@ -9,7 +9,7 @@
 
     export let camera: Camera;
 
-    export let isDrawerOpen: boolean = true;
+    export let isDrawerOpen: boolean = false;
     function toggleDrawer(){isDrawerOpen=!isDrawerOpen}
 
     const maxDisplayAlgos = 6;
@@ -66,7 +66,13 @@
             <div class="">
                 <div class="text-sm font-bold">{camera.position} camera</div>
             </div>
-            <button class="btn btn-ghost btn-circle btn-sm p-1" onclick={toggleDrawer}><EllipsisVertical /></button>
+            <button class="btn btn-ghost btn-circle btn-sm p-1" onclick={toggleDrawer}>
+                {#if isDrawerOpen}
+                <ChevronLeftIcon />
+                {:else}
+                <EllipsisVertical />
+                {/if}
+            </button>
         </div>
     </div>
 </CameraConnection>
