@@ -3,7 +3,9 @@
     import type { Camera } from "../structs/Camera";
     import { CameraStreamType } from "../structs/CameraStreamType";
     import CameraConnection from "./CameraConnection.svelte";
-    import type { Snippet } from "svelte";
+    import { onMount, type Snippet } from "svelte";
+    import type { ET_Algorithms } from "../structs/ET_Api/ET_Algorithms";
+    import { BackController } from "@src/store";
 
     export let camera: Camera;
 
@@ -13,14 +15,11 @@
     const maxDisplayAlgos = 6;
     let algosCollapsed = true;
 
-    let algos = [
-        "LEAP",
-        "BLOB",
-        "HSRAC",
-        "RANSAC",
-        "HSF",
-        "AHSF"
-      ];
+    let algos: ET_Algorithms[] | undefined= [];
+
+    onMount(async ()=>{
+        algos = await BackController.getCameraAlgorithems(camera);
+    });
 </script>
 
 {#snippet detailsSnippet()}
@@ -31,6 +30,7 @@
         <div class="font-bold text-sm pt-2">FPS:</div>
         <div>32.5</div>
         
+        {#if algos}
         <div class="font-bold text-sm pt-2">Algorithem{algos.length > 1?"s":""}:</div>
         <div class="w-full h-full overflow-y-auto">
             <div class="flex flex-wrap h-16 gap-0.5">
@@ -49,6 +49,7 @@
                 {/each}
             </div>
         </div>
+        {/if}
         
 
 
