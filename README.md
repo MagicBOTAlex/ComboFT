@@ -85,6 +85,5 @@ git fetch
 git submodule update --init --recursive
 ```
 
-
-![dragon-ball-goku](https://github.com/user-attachments/assets/60984fb0-7a5c-4335-bc15-998c5a0d8c22)
+<img src="https://github.com/user-attachments/assets/60984fb0-7a5c-4335-bc15-998c5a0d8c22" align="right" alt="4" width = 400px height = 300px> \
 Fun fact. Most of this was made while in VR. It is awesome to program in space.
