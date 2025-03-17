@@ -6,7 +6,7 @@ import { CameraStreamType, getStreamTypeAPIName } from "./structs/CameraStreamTy
 import type { ET_Algorithms } from "./structs/ET_Api/ET_Algorithms";
 import { BackendStatus } from "./structs/BackendStatus";
 import type { ET_Config } from "./structs/ET_Api/ET_Config";
-import type { ET_Tracker as TrackerConfig } from "./structs/ET_Api/ET_Tracker";
+import type { ET_Tracker, ET_Tracker as TrackerConfig } from "./structs/ET_Api/ET_Tracker";
 import type { ET_TrackerConfigOutput } from "./structs/ET_Api/ET_TrackerConfigOutput";
 import  { TrackerPosition } from "./structs/TrackerPosition";
 import { writable, type Writable} from 'svelte/store';
@@ -25,10 +25,19 @@ export class BackendController {
         this.store = writable(this);
 
 
+
         setInterval(this.checkStatus.bind(this), 5000); // Update status every x
     }
 
-    async start(){this.ET_Api.startETVR();}    
+    async start(){
+        // Temp
+        setTimeout(() => {
+            this.ET_Config!.osc.sending_port=8889;
+            this.ET_Config!.osc.receiver_port=9455;
+            this.pushConfig();
+        }, 6000);
+        this.ET_Api.startETVR();
+    }    
     async Stop(){this.ET_Api.stopETVR();
         const shutdownInterval = setInterval(() => {
             if (this.ET_Status == BackendStatus.Running) {
@@ -184,6 +193,18 @@ export class BackendController {
         this.ET_Api.updateTracker(uuid, {
             "algorithm": {
                 "algorithm_order" : algoList
+            }
+        });
+    }
+
+    public async startCalibration(position: TrackerPosition){
+        if (!this.ET_UUIDs[position]) await this.getTrackingCameraStream(position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad. (This should be called on start/connected for all cams. Ez ensure all UUID is never undefined)
+        if (this.ET_UUIDs[position] == undefined) return; // Wooomp wooomp 2.0X. using it again again
+
+        let uuid: string = this.ET_UUIDs[position]!;
+        this.ET_Api.updateTracker(uuid, {
+            calibrationData: {
+                "min_x" : Math.random() * 11 - 100 // Never let the backend know what hit em
             }
         });
     }

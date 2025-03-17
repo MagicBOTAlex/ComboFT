@@ -4,7 +4,7 @@
     import type { Camera } from '@src/lib/structs/Camera';
     import { CroppingSender } from '@src/lib/structs/CroppingSender';
     import type { TrackerPosition } from '@src/lib/structs/TrackerPosition';
-    import { Cameras } from '@src/store';
+    import { BackController, Cameras } from '@src/store';
     import { ChevronLeft, Crop } from 'lucide-svelte';
     import { onMount } from 'svelte';
     import { get } from 'svelte/store';
@@ -15,7 +15,7 @@
     $: params = new URLSearchParams(page.url.search);
     $: camParam = params.get('cam');
 
-    let selectedSettingsTab: SettingsTab = SettingsTab.Calibration;
+    let selectedSettingsTab: SettingsTab = SettingsTab.Algorithem;
 
     function setSettingTabs(tab: SettingsTab){
         setTimeout(() => {
@@ -43,7 +43,7 @@
             <div class="py-4">
                 {#if selectedSettingsTab == SettingsTab.Calibration}
                 <div class="flex gap-4">
-                    <button on:click={()=>{alert("Not implimented (yet)")}} class="btn btn-soft">Calibrate</button>
+                    <button on:click={()=>{BackController.startCalibration(camera!.position)}} class="btn btn-soft">Calibrate</button>
                     <button on:click={()=>{alert("Not implimented (yet)")}} class="btn btn-soft">Center eyes</button>
                 </div>
                 {:else if selectedSettingsTab == SettingsTab.Algorithem}

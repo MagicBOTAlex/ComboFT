@@ -28,7 +28,7 @@
         <div class="badge badge-soft badge-primary">{camera.sourceType.toUpperCase()}</div>
 
         <div class="font-bold text-sm pt-2">FPS:</div>
-        <div>32.5</div>
+        <div>###</div>
         
         {#if algos}
         <div class="font-bold text-sm pt-2">Algorithem{algos.length > 1?"s":""}:</div>

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { BackendStatus } from "@src/lib/structs/BackendStatus";
+    import { TrackerPosition } from "@src/lib/structs/TrackerPosition";
     import { BackController } from "@src/store";
     import { onDestroy } from "svelte";
 
@@ -31,7 +32,7 @@
     </div>
     <div class="p-4"></div>
     <div class="flex gap-4">
-        <button on:click={()=>{alert("Not implimented (yet)")}} class="btn btn-soft">Calibrate</button>
+        <button on:click={()=>{BackController.startCalibration(TrackerPosition.Left); BackController.startCalibration(TrackerPosition.Right);}} class="btn btn-soft">Calibrate</button>
         <button on:click={()=>{alert("Not implimented (yet)")}} class="btn btn-soft">Center eyes</button>
     </div>
 </div>
