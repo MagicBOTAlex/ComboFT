@@ -10,6 +10,7 @@
     let list: HTMLUListElement;
     let draggedItem: HTMLLIElement | null = null;
 
+    // Using 2 arrays. one to display, other to modify without svelte reload
     let initialAlgos = [ // What the algorithems the user has enabled right now
         ET_Algorithm.LEAP,
         ET_Algorithm.BLOB,
@@ -180,7 +181,7 @@
 
     <div class="row-span-full row-start-2 gap-2 flex flex-col">
         {#each Object.values(ET_Algorithm) as algo}
-        <div class="flex place-content-center">
+        <div class="flex place-content-center bod">
             <div>{algo}</div>
             <div class="ml-auto"></div>
             <div class="tooltip" data-tip="hello">
@@ -192,7 +193,7 @@
     </div>
 
 
-    <div class="row-span-full row-start-2 p-2 pl-4 border-l-2 border-base-200">
+    <div class="row-span-full row-start-2 p-2 pr-0 pl-4 border-l-2 border-base-200">
         <ul bind:this={list} class="flex flex-col w-full gap-2">
             {#each initialAlgos as algo}
             <li class="w-full flex cursor-pointer rounded-lg border border-base-300 transition-transform duration-300"
