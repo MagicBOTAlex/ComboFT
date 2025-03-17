@@ -6,20 +6,18 @@
     import HsfSettings from "./AlgoSettingsContent/HsfSettings.svelte";
     import RansacSettings from "./AlgoSettingsContent/RansacSettings.svelte";
     import AlgoSettingsModal from "./AlgoSettingsModal.svelte";
+    import { BackController } from "@src/store";
+    import type { Camera } from "@src/lib/structs/Camera";
+
+    export let camera: Camera | undefined;
 
     let list: HTMLUListElement;
     let draggedItem: HTMLLIElement | null = null;
 
     // Using 2 arrays. one to display, other to modify without svelte reload
-    let initialAlgos = [ // What the algorithems the user has enabled right now
-        ET_Algorithms.LEAP,
-        ET_Algorithms.BLOB,
-        ET_Algorithms.HSRAC,
-        ET_Algorithms.RANSAC,
-        ET_Algorithms.HSF,
-        ET_Algorithms.AHSF
-    ];
-    let modifiedAlgos: ET_Algorithms[] = initialAlgos; // What the algorithems the user will change to  
+    let loadingAlgos = true;
+    let initialAlgos: ET_Algorithms[] | undefined = undefined; // What the algorithems the user has enabled right now];
+    let modifiedAlgos: ET_Algorithms[] | undefined = initialAlgos; // What the algorithems the user will change to  
 
     const algoSettingsSnippits: Record<ET_Algorithms, Snippet | undefined> = {
         [ET_Algorithms.LEAP]: undefined,
@@ -40,7 +38,15 @@
             const dataAlgo: string = liAlgo.dataset.algo || '';
             modifiedAlgos.push(dataAlgo as ET_Algorithms);
         }
-        console.log(modifiedAlgos);
+        // console.log(modifiedAlgos);
+    }
+
+    // Gets called when added, when removed, when re-ordered
+    async function onAlgoUpdated(){
+        await tick();
+        updateAlgosArr();
+        if (camera && modifiedAlgos)
+            BackController.pushCameraAlgorithems(camera, modifiedAlgos);
     }
 
 
@@ -104,8 +110,12 @@
         ).element;
     }
 
-    onMount(() => {
+    onMount(async () => {
+        await tick();
+        initialAlgos = await BackController.getCameraAlgorithems(camera!);
+        modifiedAlgos = initialAlgos;
 
+        loadingAlgos = false;
     });
 
     async function onDragEnd(){
@@ -117,8 +127,7 @@
             );
         }
         draggedItem = null;
-        await tick();
-        updateAlgosArr();
+        onAlgoUpdated();
     }
 
     async function onDragOver(e: DragEvent) {
@@ -151,6 +160,27 @@
         await tick();
         selectedAlgoSettings = algo;
         showSettingsModal= true;
+    }
+
+    async function addAlgoToList(algo: ET_Algorithms){
+        if (modifiedAlgos?.indexOf(algo) != -1) return; // Algo already in list
+
+        modifiedAlgos.push(algo);
+        initialAlgos = modifiedAlgos;
+        
+        onAlgoUpdated();
+    }
+
+    async function removeAlgoFromList(algo: ET_Algorithms){
+        // console.log("Removeing: " + algo);
+        if (!modifiedAlgos) return;
+        let index = modifiedAlgos.indexOf(algo);
+        if (index == -1) return; // Algo not in list
+
+        modifiedAlgos = modifiedAlgos.filter(x => x != algo);
+        initialAlgos = modifiedAlgos;
+        
+        onAlgoUpdated();
     }
 </script>
 
@@ -187,7 +217,10 @@
             <div class="tooltip" data-tip="hello">
                 <button class="p-0"><Info class="p-1 text-info"/></button>
             </div>
-            <button class="btn btn-soft btn-success btn-xs p-0 {modifiedAlgos.indexOf(algo as ET_Algorithms) != -1 ?"btn-disabled":""}"><Plus/></button>
+            <button class="btn btn-soft btn-success btn-xs p-0 {loadingAlgos || !modifiedAlgos || modifiedAlgos.indexOf(algo as ET_Algorithms) != -1 ?"btn-disabled":""}"
+            on:click={()=>{addAlgoToList(algo as ET_Algorithms);}}>
+                <Plus/>
+            </button>
         </div>
         {/each}
     </div>
@@ -195,6 +228,11 @@
 
     <div class="row-span-full row-start-2 p-2 pr-0 pl-4 border-l-2 border-base-200">
         <ul bind:this={list} class="flex flex-col w-full gap-2">
+            {#if loadingAlgos || !initialAlgos}
+            {#each Object.keys(ET_Algorithms) as i}
+            <div class="skeleton h-8 w-full"></div>
+            {/each}
+            {:else}
             {#each initialAlgos as algo}
             <li class="w-full flex cursor-pointer rounded-lg border border-base-300 transition-transform duration-300"
             draggable="true"
@@ -210,7 +248,10 @@
                     <div class="text-base-content opacity-80">{algo}</div>
                 </div>
                 <div class="flex">
-                    <button class="p-0 btn-ghost cursor-pointer hover:text-error transition-colors"><X class="p-0.5"/></button>
+                    <button class="p-0 btn-ghost cursor-pointer hover:text-error transition-colors"
+                    on:click={()=>{removeAlgoFromList(algo);}}>
+                        <X class="p-0.5"/>
+                    </button>
                     <div class="-ml-1.5"></div>
                     <button class="p-0 btn-ghost {algoSettingsSnippits[algo]? "cursor-pointer": "opacity-30"}"
                     on:click={()=>{openAlgoSettings(algo)}}>
@@ -219,6 +260,7 @@
                 </div>
             </li>
             {/each}
+            {/if}
         </ul>
     </div>
 </div>

@@ -168,9 +168,23 @@ export class BackendController {
         if (this.ET_UUIDs[cam.position] == undefined) return;
 
         let cameraTracker: ET_TrackerConfigOutput = await this.ET_Api.getTracker(this.ET_UUIDs[cam.position]!);
+        if (!cameraTracker) return undefined;
+        if (!cameraTracker.algorithm) return undefined;
+        if (!cameraTracker.algorithm.algorithm_order || cameraTracker.algorithm.algorithm_order.length == 0) return undefined;
 
+        return cameraTracker.algorithm.algorithm_order;
+    }
 
+    // Pushes the algorithems and their order to the back-end config
+    public async pushCameraAlgorithems(cam: Camera, algoList: ET_Algorithms[]){
+        if (!this.ET_UUIDs[cam.position]) await this.getTrackingCameraStream(cam.position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad. (This should be called on start/connected for all cams. Ez ensure all UUID is never undefined)
+        if (this.ET_UUIDs[cam.position] == undefined) return; // Wooomp wooomp. using it again
 
-        return undefined;
+        let uuid: string = this.ET_UUIDs[cam.position]!;
+        this.ET_Api.updateTracker(uuid, {
+            "algorithm": {
+                "algorithm_order" : algoList
+            }
+        });
     }
 }

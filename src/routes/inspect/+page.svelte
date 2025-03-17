@@ -48,7 +48,7 @@
                 </div>
                 {:else if selectedSettingsTab == SettingsTab.Algorithem}
                 <div class="flex gap-4">
-                    <AlgoSelect/>
+                    <AlgoSelect {camera}/>
                 </div>
                 {/if}
             </div>
