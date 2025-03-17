@@ -15,7 +15,7 @@
     $: params = new URLSearchParams(page.url.search);
     $: camParam = params.get('cam');
 
-    let selectedSettingsTab: SettingsTab = SettingsTab.Algorithem;
+    let selectedSettingsTab: SettingsTab = SettingsTab.Calibration;
 
     function setSettingTabs(tab: SettingsTab){
         setTimeout(() => {
