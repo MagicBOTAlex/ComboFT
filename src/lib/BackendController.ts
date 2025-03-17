@@ -4,16 +4,17 @@ import type { Box } from "./structs/Box";
 import type { Camera } from "./structs/Camera";
 import { CameraStreamType, getStreamTypeAPIName } from "./structs/CameraStreamType";
 import type { ET_Algorithms } from "./structs/ET_Api/ET_Algorithms";
-import { ETVRStatus } from "./structs/ETVRBackendStatus";
-import type { ETVRConfig, Tracker as TrackerConfig } from "./structs/ETVRConfig";
+import { BackendStatus } from "./structs/BackendStatus";
+import type { ET_Config } from "./structs/ET_Api/ET_Config";
+import type { ET_Tracker as TrackerConfig } from "./structs/ET_Api/ET_Tracker";
 import type { ET_TrackerConfigOutput } from "./structs/ET_Api/ET_TrackerConfigOutput";
 import  { TrackerPosition } from "./structs/TrackerPosition";
 import { writable, type Writable} from 'svelte/store';
 
 export class BackendController {
-    ET_Status: ETVRStatus = ETVRStatus.Stopped;
+    ET_Status: BackendStatus = BackendStatus.Stopped;
     ET_Api: ETApi; // Oh shit, TS supports this? I love it!!!
-    ET_Config: ETVRConfig |undefined;
+    ET_Config: ET_Config |undefined;
     ET_UUIDs: Partial<Record<TrackerPosition, string | undefined>> = {}; // I Really hate this UUID system. We're never going to have that many cameras!!! Other things will break down long before.
     store: Writable<BackendController> | any;
 
@@ -31,7 +32,7 @@ export class BackendController {
     async start(){this.ET_Api.startETVR();}    
     async Stop(){this.ET_Api.stopETVR();
         const shutdownInterval = setInterval(() => {
-            if (this.ET_Status == ETVRStatus.Running) {
+            if (this.ET_Status == BackendStatus.Running) {
                 this.ET_Api.stopETVR();
             } else {
                 clearInterval(shutdownInterval);
@@ -39,7 +40,7 @@ export class BackendController {
         }, 500);
     }
     async Reset(){this.ET_Api.restartETVR();}
-    async quit(){this.ET_Api.shutdownETVR(); this.ET_Status = ETVRStatus.Quit;}
+    async quit(){this.ET_Api.shutdownETVR(); this.ET_Status = BackendStatus.Quit;}
 
     async getConfig(forceUpdate: boolean = false) {
         if (!this.ET_Config || forceUpdate) {
@@ -51,10 +52,10 @@ export class BackendController {
     // Runs to check current status
     public async checkStatus(){ // No way!!! pulic too. This is just like C#
         let newStatus: boolean = await this.ET_Api.getETVRStatus();
-        if (((newStatus) ? ETVRStatus.Running : ETVRStatus.Stopped) != this.ET_Status){
+        if (((newStatus) ? BackendStatus.Running : BackendStatus.Stopped) != this.ET_Status){
             Logger.log('info', (newStatus) ? "ETVR now running..." : "ETVR stopped.")
         }
-        this.ET_Status = (newStatus) ? ETVRStatus.Running : ETVRStatus.Stopped;
+        this.ET_Status = (newStatus) ? BackendStatus.Running : BackendStatus.Stopped;
     }
 
     // Here comes the powerful stuff by making this class:

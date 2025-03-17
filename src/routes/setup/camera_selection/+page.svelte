@@ -10,7 +10,7 @@
     import { Camera } from "lucide-svelte";
     import { onDestroy, onMount } from "svelte";
     import { invoke } from "@tauri-apps/api/core";
-    import { ETVRStatus } from "@src/lib/structs/ETVRBackendStatus";
+    import { BackendStatus } from "@src/lib/structs/BackendStatus";
     import EtvrControls from "@src/routes/tracking/comps/ETVRControls.svelte";
     import { BackendController } from "@src/lib/BackendController";
 
@@ -36,7 +36,7 @@
     });
 
     function forceReload(){
-        isRunning = ETVRController.ET_Status == ETVRStatus.Running;
+        isRunning = ETVRController.ET_Status == BackendStatus.Running;
         if (isRunning){
             ETVRController.Stop(); // I REALLY WANT IT TO STOP!!!
         }

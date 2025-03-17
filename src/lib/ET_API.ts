@@ -1,5 +1,5 @@
 // etvr-api.ts
-import type { ETVRConfig } from './structs/ETVRConfig';
+import type { ET_Config } from './structs/ET_Api/ET_Config';
 import type { ET_TrackerConfigOutput } from './structs/ET_Api/ET_TrackerConfigOutput';
 import type { ET_TrackerConfigInput } from './structs/ET_Api/ET_TrackerConfigInput';
 
@@ -82,14 +82,14 @@ export class ETApi {
     exclude_none?: boolean;
     round_trip?: boolean;
     warnings?: boolean;
-  }): Promise<ETVRConfig> {
+  }): Promise<ET_Config> {
     // Build query string from params if desired
     const queryString = params ? this.toQueryString(params) : '';
     const url = `${this.baseURL}/etvr/config${queryString}`;
-    return fetchJson<ETVRConfig>(url);
+    return fetchJson<ET_Config>(url);
   }
 
-  public updateConfig(config: Partial<ETVRConfig>): Promise<void> {
+  public updateConfig(config: Partial<ET_Config>): Promise<void> {
     const url = `${this.baseURL}/etvr/config`;
     return fetchJson<void>(url, {
       method: 'POST',
@@ -103,9 +103,9 @@ export class ETApi {
     return fetchJson<void>(url);
   }
 
-  public loadConfig(): Promise<ETVRConfig> {
+  public loadConfig(): Promise<ET_Config> {
     const url = `${this.baseURL}/etvr/config/load`;
-    return fetchJson<ETVRConfig>(url);
+    return fetchJson<ET_Config>(url);
   }
 
   public resetConfig(): Promise<void> {

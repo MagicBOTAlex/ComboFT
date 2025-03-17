@@ -1,4 +1,4 @@
-export enum ETVRStatus {
+export enum BackendStatus {
     Running,
     Stopped,
     Quit
