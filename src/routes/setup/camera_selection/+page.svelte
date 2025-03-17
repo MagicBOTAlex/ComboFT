@@ -4,7 +4,7 @@
     import Tabs from "../comps/tabs.svelte";
     import { TrackerPosition as TrackerPosition } from "../../../lib/structs/TrackerPosition";
     import { goto } from '$app/navigation';
-    import { Cameras, ETVRController } from "@src/store";
+    import { Cameras, BackController } from "@src/store";
     import { get } from "svelte/store";
     import { CameraStreamType } from "@src/lib/structs/CameraStreamType";
     import { Camera } from "lucide-svelte";
@@ -18,10 +18,10 @@
         const cameras_ = get(Cameras);
         Object.values(cameras_).map(x=>{
             if (x.isEnabled)
-                ETVRController.pushCameraAddr(x!);
+                BackController.pushCameraAddr(x!);
         });
 
-        ETVRController.start();
+        BackController.start();
         // console.log( await ETVRController.getTrackingCameraStream(TrackerPosition.Left, CameraStreamType.Raw));
 
         goto('/setup/testing_con');
@@ -36,17 +36,17 @@
     });
 
     function forceReload(){
-        isRunning = ETVRController.ET_Status == BackendStatus.Running;
+        isRunning = BackController.ET_Status == BackendStatus.Running;
         if (isRunning){
-            ETVRController.Stop(); // I REALLY WANT IT TO STOP!!!
+            BackController.Stop(); // I REALLY WANT IT TO STOP!!!
         }
     }
 
 
     onMount(async () =>{
-        await ETVRController.checkStatus();
+        await BackController.checkStatus();
         forceReload();
-        ETVRController.Stop();
+        BackController.Stop();
     });
 
     let enableBabble: boolean = false;

@@ -3,7 +3,7 @@
     import "../style.css";
     import DrawerContents from "./LayoutComps/DrawerContents.svelte";
     import Navbar from "./LayoutComps/Navbar.svelte";
-    import { ETVRController } from "../store";
+    import { BackController } from "../store";
 </script>
 
 <Navbar style="height: 10vh;"/>

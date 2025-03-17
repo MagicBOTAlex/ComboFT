@@ -1,6 +1,6 @@
 <script lang="ts">
     import { BackendStatus } from "@src/lib/structs/BackendStatus";
-    import { ETVRController } from "@src/store";
+    import { BackController } from "@src/store";
     import { onDestroy } from "svelte";
 
     let backendStatus: BackendStatus = BackendStatus.Stopped; // Used to force reload this page
@@ -12,7 +12,7 @@
     });
 
     function forceReload(){
-        backendStatus = ETVRController.ET_Status;
+        backendStatus = BackController.ET_Status;
     }
 </script>
 

@@ -3,7 +3,7 @@
     import CameraStream from '@src/lib/CameraSvelteComponents/CameraStream.svelte';
     import { Camera } from '@src/lib/structs/Camera';
     import { stringToTrackerPosition, TrackerPosition } from '@src/lib/structs/TrackerPosition';
-    import { Cameras, ETVRController } from '@src/store';
+    import { Cameras, BackController } from '@src/store';
     import { onMount } from 'svelte';
     import { get } from 'svelte/store';
     import { CameraStreamType } from '@src/lib/structs/CameraStreamType';
@@ -24,7 +24,7 @@
     });
 
     function onFinishCropping(finalBox: Box) {
-        ETVRController.pushCrop(cam as TrackerPosition, finalBox);
+        BackController.pushCrop(cam as TrackerPosition, finalBox);
         cropSet = true;
     }
 

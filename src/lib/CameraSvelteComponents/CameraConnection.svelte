@@ -2,7 +2,7 @@
     import { CameraConnectionType } from "./CameraConnectionType";
     import { TrackerPosition } from "../structs/TrackerPosition";
     import { get } from "svelte/store";
-    import { Cameras, ETVRController } from "@src/store";
+    import { Cameras, BackController } from "@src/store";
     import { onMount, type Snippet } from "svelte";
     import { CameraStreamType } from "../structs/CameraStreamType";
     import CameraStream from "./CameraStream.svelte";

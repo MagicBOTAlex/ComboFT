@@ -23,7 +23,6 @@ export class BackendController {
         this.ET_Api.loadConfig(); // Load old config by default
         this.getConfig(true);
         this.store = writable(this);
-        
 
 
         setInterval(this.checkStatus.bind(this), 5000); // Update status every x

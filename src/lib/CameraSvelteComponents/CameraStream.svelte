@@ -2,7 +2,7 @@
     import { CameraConnectionType } from "./CameraConnectionType";
     import { TrackerPosition } from "../structs/TrackerPosition";
     import { get } from "svelte/store";
-    import { Cameras, ETVRController } from "@src/store";
+    import { Cameras, BackController } from "@src/store";
     import { onMount, onDestroy } from "svelte";
     import { CameraStreamType } from "../structs/CameraStreamType";
     import type { Camera } from "../structs/Camera";
@@ -38,7 +38,7 @@
 
     async function updateCameraSrc() {
         if (camera){
-            videoStreamSource = await ETVRController.getTrackingCameraStream(camera.position, streamType)
+            videoStreamSource = await BackController.getTrackingCameraStream(camera.position, streamType)
             timestamp = new Date().getTime(); // Prevents loading anything cached
         }
         // console.log(streamType);
