@@ -12,7 +12,7 @@
     });
 
     function forceReload(){
-        backendStatus = ETVRController.status;
+        backendStatus = ETVRController.ET_Status;
     }
 </script>
 

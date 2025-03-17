@@ -1,23 +1,25 @@
-import { ETVRApi} from "./ETVR_API";
+import { ETApi} from "./ET_API";
 import { Logger } from "./Logger";
 import type { Box } from "./structs/Box";
 import type { Camera } from "./structs/Camera";
 import { CameraStreamType, getStreamTypeAPIName } from "./structs/CameraStreamType";
+import type { ET_Algorithms } from "./structs/ET_Api/ET_Algorithms";
 import { ETVRStatus } from "./structs/ETVRBackendStatus";
 import type { ETVRConfig, Tracker as TrackerConfig } from "./structs/ETVRConfig";
+import type { ET_TrackerConfigOutput } from "./structs/ET_Api/ET_TrackerConfigOutput";
 import  { TrackerPosition } from "./structs/TrackerPosition";
 import { writable, type Writable} from 'svelte/store';
 
-export class ETVR_Controller {
-    status: ETVRStatus = ETVRStatus.Stopped;
-    api: ETVRApi; // Oh shit, TS supports this? I love it!!!
-    config: ETVRConfig |undefined;
-    UUIDs: Partial<Record<TrackerPosition, string | undefined>> = {};
-    store: Writable<ETVR_Controller> | any;
+export class BackendController {
+    ET_Status: ETVRStatus = ETVRStatus.Stopped;
+    ET_Api: ETApi; // Oh shit, TS supports this? I love it!!!
+    ET_Config: ETVRConfig |undefined;
+    ET_UUIDs: Partial<Record<TrackerPosition, string | undefined>> = {}; // I Really hate this UUID system. We're never going to have that many cameras!!! Other things will break down long before.
+    store: Writable<BackendController> | any;
 
     constructor(url: string) {
-        this.api = new ETVRApi(url);
-        this.api.loadConfig(); // Load old config by default
+        this.ET_Api = new ETApi(url);
+        this.ET_Api.loadConfig(); // Load old config by default
         this.getConfig(true);
         this.store = writable(this);
         
@@ -26,46 +28,46 @@ export class ETVR_Controller {
         setInterval(this.checkStatus.bind(this), 5000); // Update status every x
     }
 
-    async start(){this.api.startETVR();}    
-    async Stop(){this.api.stopETVR();
+    async start(){this.ET_Api.startETVR();}    
+    async Stop(){this.ET_Api.stopETVR();
         const shutdownInterval = setInterval(() => {
-            if (this.status == ETVRStatus.Running) {
-                this.api.stopETVR();
+            if (this.ET_Status == ETVRStatus.Running) {
+                this.ET_Api.stopETVR();
             } else {
                 clearInterval(shutdownInterval);
             }
         }, 500);
     }
-    async Reset(){this.api.restartETVR();}
-    async quit(){this.api.shutdownETVR(); this.status = ETVRStatus.Quit;}
+    async Reset(){this.ET_Api.restartETVR();}
+    async quit(){this.ET_Api.shutdownETVR(); this.ET_Status = ETVRStatus.Quit;}
 
     async getConfig(forceUpdate: boolean = false) {
-        if (!this.config || forceUpdate) {
-            this.config = await this.api.getConfig();
+        if (!this.ET_Config || forceUpdate) {
+            this.ET_Config = await this.ET_Api.getConfig();
         }
-        return this.config;
+        return this.ET_Config;
     }
 
     // Runs to check current status
     public async checkStatus(){ // No way!!! pulic too. This is just like C#
-        let newStatus: boolean = await this.api.getETVRStatus();
-        if (((newStatus) ? ETVRStatus.Running : ETVRStatus.Stopped) != this.status){
+        let newStatus: boolean = await this.ET_Api.getETVRStatus();
+        if (((newStatus) ? ETVRStatus.Running : ETVRStatus.Stopped) != this.ET_Status){
             Logger.log('info', (newStatus) ? "ETVR now running..." : "ETVR stopped.")
         }
-        this.status = (newStatus) ? ETVRStatus.Running : ETVRStatus.Stopped;
+        this.ET_Status = (newStatus) ? ETVRStatus.Running : ETVRStatus.Stopped;
     }
 
     // Here comes the powerful stuff by making this class:
     // Returns the Stream URL
     public async getTrackingCameraStream(trackingCam: TrackerPosition, streamType: CameraStreamType): Promise<string> {
-        if (!this.UUIDs[trackingCam]){
+        if (!this.ET_UUIDs[trackingCam]){
             let trackerConf = await this.getTrackingCameraConfig(trackingCam);
             if (!trackerConf) return "";
-            this.UUIDs[trackingCam] = trackerConf.uuid;
+            this.ET_UUIDs[trackingCam] = trackerConf.uuid;
         }
         let streamAPIName = getStreamTypeAPIName(streamType);
 
-        return `${this.api.baseURL}/etvr/feed/${this.UUIDs[trackingCam]}/${streamAPIName}`;
+        return `${this.ET_Api.baseURL}/etvr/feed/${this.ET_UUIDs[trackingCam]}/${streamAPIName}`;
     }
 
     public async getETVRName(position: TrackerPosition): Promise<string>{
@@ -82,9 +84,9 @@ export class ETVR_Controller {
     }
 
     public async getTrackingCameraConfig(position: TrackerPosition): Promise<TrackerConfig | undefined>{
-        if (!this.config) await this.getConfig();
-        if (!this.config) return undefined;
-        const trackers: TrackerConfig[]  = this.config.trackers;
+        if (!this.ET_Config) await this.getConfig();
+        if (!this.ET_Config) return undefined;
+        const trackers: TrackerConfig[]  = this.ET_Config.trackers;
 
         for (let I = 0; I < trackers.length; I++) {
             const tracker = trackers[I];
@@ -98,16 +100,16 @@ export class ETVR_Controller {
     }
 
     async pushConfig(){
-        if (!this.config) await this.getConfig();
-        if (!this.config) return;
-        this.api.updateConfig(this.config);
-        this.api.saveConfig();
+        if (!this.ET_Config) await this.getConfig();
+        if (!this.ET_Config) return;
+        this.ET_Api.updateConfig(this.ET_Config);
+        this.ET_Api.saveConfig();
     }
 
     public async setTrackerCameraSource(trackingCam: TrackerPosition, addr: string){
-        if (!this.UUIDs[trackingCam]) await this.getTrackingCameraStream(trackingCam, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad
-        if (!this.UUIDs[trackingCam]) return;
-        this.api.updateTracker(this.UUIDs[trackingCam], 
+        if (!this.ET_UUIDs[trackingCam]) await this.getTrackingCameraStream(trackingCam, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad
+        if (!this.ET_UUIDs[trackingCam]) return;
+        this.ET_Api.updateTracker(this.ET_UUIDs[trackingCam], 
             {"camera": {
                 "capture_source": addr
             }
@@ -124,10 +126,10 @@ export class ETVR_Controller {
         if (!cam.position) return;
         if (!trackerConf) return;
 
-        if (!this.UUIDs[cam.position]) await this.getTrackingCameraStream(cam.position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad
-        if (this.UUIDs[cam.position] == undefined) return;
-        let uuid: string = this.UUIDs[cam.position]!;
-        this.api.updateTracker(uuid, {
+        if (!this.ET_UUIDs[cam.position]) await this.getTrackingCameraStream(cam.position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad
+        if (this.ET_UUIDs[cam.position] == undefined) return;
+        let uuid: string = this.ET_UUIDs[cam.position]!;
+        this.ET_Api.updateTracker(uuid, {
             "camera": {
                 "capture_source": cam.addr
             }
@@ -136,11 +138,11 @@ export class ETVR_Controller {
 
     public async pushCrop(position: TrackerPosition, croppingBox: Box){
         // Third time using this chunk. This is really a TODO lol
-        if (!this.UUIDs[position]) await this.getTrackingCameraStream(position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad.
-        if (this.UUIDs[position] == undefined) return;
-        let uuid: string = this.UUIDs[position]!;
+        if (!this.ET_UUIDs[position]) await this.getTrackingCameraStream(position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad.
+        if (this.ET_UUIDs[position] == undefined) return;
+        let uuid: string = this.ET_UUIDs[position]!;
         if (croppingBox.isValid()){
-            this.api.updateTracker(uuid, {
+            this.ET_Api.updateTracker(uuid, {
                 "camera": {
                     "roi_x": croppingBox.x,
                     "roi_y": croppingBox.y,
@@ -150,7 +152,7 @@ export class ETVR_Controller {
             });
         } else {
             Logger.log('warn', "Invalid crop box detected. resetting crop");
-            this.api.updateTracker(uuid, {
+            this.ET_Api.updateTracker(uuid, {
                 "camera": {
                     "roi_x": null,
                     "roi_y": null,
@@ -159,5 +161,16 @@ export class ETVR_Controller {
                 }
             });
         }
+    }
+
+    public async getCameraAlgorithems(cam: Camera): Promise<ET_Algorithms[] | undefined>{
+        if (!this.ET_UUIDs[cam.position]) await this.getTrackingCameraStream(cam.position, CameraStreamType.Raw); // Gonna reuse this, but is slightly inefficient, TS gets mad. (This should be called on start/connected for all cams. Ez ensure all UUID is never undefined)
+        if (this.ET_UUIDs[cam.position] == undefined) return;
+
+        let cameraTracker: ET_TrackerConfigOutput = await this.ET_Api.getTracker(this.ET_UUIDs[cam.position]!);
+
+
+
+        return undefined;
     }
 }

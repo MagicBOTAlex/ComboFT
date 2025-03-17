@@ -12,7 +12,7 @@
     import { invoke } from "@tauri-apps/api/core";
     import { ETVRStatus } from "@src/lib/structs/ETVRBackendStatus";
     import EtvrControls from "@src/routes/tracking/comps/ETVRControls.svelte";
-    import { ETVR_Controller } from "@src/lib/ETVR_Controller";
+    import { BackendController } from "@src/lib/BackendController";
 
     async function onFinishClick(){
         const cameras_ = get(Cameras);
@@ -36,7 +36,7 @@
     });
 
     function forceReload(){
-        isRunning = ETVRController.status == ETVRStatus.Running;
+        isRunning = ETVRController.ET_Status == ETVRStatus.Running;
         if (isRunning){
             ETVRController.Stop(); // I REALLY WANT IT TO STOP!!!
         }

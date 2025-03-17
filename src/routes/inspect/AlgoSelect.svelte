@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ET_Algorithm as ET_Algorithm } from "@src/lib/structs/ET_Algorithm";
+    import { ET_Algorithms as ET_Algorithms } from "@src/lib/structs/ET_Api/ET_Algorithms";
     import { ArrowDownAZ, ArrowRight, GripVertical, Info, Plus, Settings, X } from "lucide-svelte";
     import { onMount, tick, type Snippet } from "svelte";
     import BlobSettings from "./AlgoSettingsContent/BlobSettings.svelte";
@@ -12,22 +12,22 @@
 
     // Using 2 arrays. one to display, other to modify without svelte reload
     let initialAlgos = [ // What the algorithems the user has enabled right now
-        ET_Algorithm.LEAP,
-        ET_Algorithm.BLOB,
-        ET_Algorithm.HSRAC,
-        ET_Algorithm.RANSAC,
-        ET_Algorithm.HSF,
-        ET_Algorithm.AHSF
+        ET_Algorithms.LEAP,
+        ET_Algorithms.BLOB,
+        ET_Algorithms.HSRAC,
+        ET_Algorithms.RANSAC,
+        ET_Algorithms.HSF,
+        ET_Algorithms.AHSF
     ];
-    let modifiedAlgos: ET_Algorithm[] = initialAlgos; // What the algorithems the user will change to  
+    let modifiedAlgos: ET_Algorithms[] = initialAlgos; // What the algorithems the user will change to  
 
-    const algoSettingsSnippits: Record<ET_Algorithm, Snippet | undefined> = {
-        [ET_Algorithm.LEAP]: undefined,
-        [ET_Algorithm.BLOB]: BlobSettings_snip,
-        [ET_Algorithm.HSRAC]: undefined,
-        [ET_Algorithm.RANSAC]: HsfSettings_snip,
-        [ET_Algorithm.HSF]: RansacSettings_snip,
-        [ET_Algorithm.AHSF]: undefined
+    const algoSettingsSnippits: Record<ET_Algorithms, Snippet | undefined> = {
+        [ET_Algorithms.LEAP]: undefined,
+        [ET_Algorithms.BLOB]: BlobSettings_snip,
+        [ET_Algorithms.HSRAC]: undefined,
+        [ET_Algorithms.RANSAC]: HsfSettings_snip,
+        [ET_Algorithms.HSF]: RansacSettings_snip,
+        [ET_Algorithms.AHSF]: undefined
     };
 
     async function updateAlgosArr(){
@@ -38,7 +38,7 @@
             if (!liAlgo) continue;
 
             const dataAlgo: string = liAlgo.dataset.algo || '';
-            modifiedAlgos.push(dataAlgo as ET_Algorithm);
+            modifiedAlgos.push(dataAlgo as ET_Algorithms);
         }
         console.log(modifiedAlgos);
     }
@@ -145,9 +145,9 @@
         draggedItem.classList.add("dragging", "opacity-50", "scale-105");
     }
 
-    let selectedAlgoSettings: ET_Algorithm | undefined = undefined;
+    let selectedAlgoSettings: ET_Algorithms | undefined = undefined;
     let showSettingsModal = false;
-    async function openAlgoSettings(algo: ET_Algorithm){
+    async function openAlgoSettings(algo: ET_Algorithms){
         await tick();
         selectedAlgoSettings = algo;
         showSettingsModal= true;
@@ -180,14 +180,14 @@
 
 
     <div class="row-span-full row-start-2 gap-2 flex flex-col">
-        {#each Object.values(ET_Algorithm) as algo}
+        {#each Object.values(ET_Algorithms) as algo}
         <div class="flex place-content-center bod">
             <div>{algo}</div>
             <div class="ml-auto"></div>
             <div class="tooltip" data-tip="hello">
                 <button class="p-0"><Info class="p-1 text-info"/></button>
             </div>
-            <button class="btn btn-soft btn-success btn-xs p-0 {modifiedAlgos.indexOf(algo as ET_Algorithm) != -1 ?"btn-disabled":""}"><Plus/></button>
+            <button class="btn btn-soft btn-success btn-xs p-0 {modifiedAlgos.indexOf(algo as ET_Algorithms) != -1 ?"btn-disabled":""}"><Plus/></button>
         </div>
         {/each}
     </div>

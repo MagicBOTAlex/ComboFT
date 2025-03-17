@@ -1,7 +1,7 @@
 // etvr-api.ts
 import type { ETVRConfig } from './structs/ETVRConfig';
-import type { TrackerConfigOutput } from './structs/TrackerConfigOutput';
-import type { TrackerConfigInput } from './structs/TrackerConfigInput';
+import type { ET_TrackerConfigOutput } from './structs/ET_Api/ET_TrackerConfigOutput';
+import type { ET_TrackerConfigInput } from './structs/ET_Api/ET_TrackerConfigInput';
 
 /**
  * Simple helper function to handle JSON requests.
@@ -23,7 +23,7 @@ async function fetchJson<T>(
 /**
  * A small ETVR client class that uses `fetch` to communicate with the API.
  */
-export class ETVRApi {
+export class ETApi {
   constructor(public baseURL: string) {}
 
   /**
@@ -121,21 +121,21 @@ export class ETVRApi {
     return fetchJson<void>(url);
   }
 
-  public getAllTrackers(): Promise<TrackerConfigOutput[]> {
+  public getAllTrackers(): Promise<ET_TrackerConfigOutput[]> {
     const url = `${this.baseURL}/etvr/config/trackers`;
-    return fetchJson<TrackerConfigOutput[]>(url);
+    return fetchJson<ET_TrackerConfigOutput[]>(url);
   }
 
-  public getTracker(uuid: string): Promise<TrackerConfigOutput> {
+  public getTracker(uuid: string): Promise<ET_TrackerConfigOutput> {
     const url = `${this.baseURL}/etvr/config/tracker?uuid=${uuid}`;
-    return fetchJson<TrackerConfigOutput>(url);
+    return fetchJson<ET_TrackerConfigOutput>(url);
   }
 
   public createTracker(
-    newTracker: TrackerConfigInput
-  ): Promise<TrackerConfigOutput> {
+    newTracker: ET_TrackerConfigInput
+  ): Promise<ET_TrackerConfigOutput> {
     const url = `${this.baseURL}/etvr/config/tracker`;
-    return fetchJson<TrackerConfigOutput>(url, {
+    return fetchJson<ET_TrackerConfigOutput>(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newTracker),
@@ -144,7 +144,7 @@ export class ETVRApi {
 
   public updateTracker(
     uuid: string,
-    partialTracker: Partial<TrackerConfigInput>
+    partialTracker: Partial<ET_TrackerConfigInput>
   ): Promise<void> {
     const url = `${this.baseURL}/etvr/config/tracker?uuid=${uuid}`;
     return fetchJson<void>(url, {

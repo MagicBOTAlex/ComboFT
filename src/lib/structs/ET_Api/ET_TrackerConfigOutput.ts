@@ -1,4 +1,4 @@
-export interface TrackerConfigOutput {
+export interface ET_TrackerConfigOutput {
   enabled: boolean;
   name: string;
   uuid: string;
