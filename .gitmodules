@@ -4,3 +4,6 @@
 [submodule "ProjectBabble-backend"]
 	path = PB-Backend
 	url = https://github.com/MagicBOTAlex/ProjectBabble-backend.git
+[submodule "PB-Backend"]
+	path = PB-Backend
+	url = https://github.com/MagicBOTAlex/ProjectBabble-backend.git
