@@ -1,3 +1,6 @@
 [submodule "ETVR-Backend"]
 	path = ETVR-Backend
 	url = https://github.com/MagicBOTAlex/ETVR-Backend.git
+[submodule "ProjectBabble-backend"]
+	path = PB-Backend
+	url = https://github.com/MagicBOTAlex/ProjectBabble-backend.git
