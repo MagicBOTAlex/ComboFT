@@ -10,16 +10,19 @@ import type { ET_Tracker, ET_Tracker as TrackerConfig } from "./structs/ET_Api/E
 import type { ET_TrackerConfigOutput } from "./structs/ET_Api/ET_TrackerConfigOutput";
 import  { TrackerPosition } from "./structs/TrackerPosition";
 import { writable, type Writable} from 'svelte/store';
+import { PB_API } from "./PB_API";
 
 export class BackendController {
     ET_Status: BackendStatus = BackendStatus.Stopped;
-    ET_Api: ETApi; // Oh shit, TS supports this? I love it!!!
+    ET_Api: ETApi; // Oh shit, TS supports this (props)? I love it!!!
+    PB_Api: PB_API; 
     ET_Config: ET_Config |undefined;
     ET_UUIDs: Partial<Record<TrackerPosition, string | undefined>> = {}; // I Really hate this UUID system. We're never going to have that many cameras!!! Other things will break down long before.
     store: Writable<BackendController> | any;
 
-    constructor(url: string) {
-        this.ET_Api = new ETApi(url);
+    constructor(ET_url: string, PB_url: string) {
+        this.ET_Api = new ETApi(ET_url);
+        this.PB_Api = new PB_API(PB_url);
         this.store = writable(this);
         
         this.initialize();
@@ -152,17 +155,6 @@ export class BackendController {
             }
         } catch (error) {
             Logger.log('error', 'Failed to push config', error);
-        }
-    }
-
-    public async setTrackerCameraSource(position: TrackerPosition, addr: string) {
-        try {
-            const uuid = await this.ensureTrackerUuid(position);
-            await this.ET_Api.updateTracker(uuid, {
-                camera: { capture_source: addr }
-            });
-        } catch (error) {
-            Logger.log('error', 'Failed to set camera source', error);
         }
     }
 

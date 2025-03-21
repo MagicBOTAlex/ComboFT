@@ -9,9 +9,9 @@ export class PB_Controller {
     private backendUrl: string;
     private PB_Api: PB_API;
     
-    constructor(url: string) {
-        this.backendUrl = url;
-        this.PB_Api = new PB_API(url);
+    constructor(PB_Api: PB_API) {
+        this.PB_Api = PB_Api;
+        this.backendUrl = PB_Api.baseUrl;
 
         this.initConfig();
     }
@@ -25,6 +25,10 @@ export class PB_Controller {
         if (!result){
             this.loadDefaultConfig();
         }
+    }
+
+    async updateConfig(json: Record<string, any>){
+        await updateJsonProp(await this.getConfigPath(), json);
     }
 
     async getConfigPath(): Promise<string> {
