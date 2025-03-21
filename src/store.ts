@@ -1,5 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
 import { BackendController } from './lib/BackendController';
+import { PB_Controller } from './lib/PB_Controller';
 import { TrackerPosition } from './lib/structs/TrackerPosition';
 import { Camera } from './lib/structs/Camera';
 
@@ -55,8 +56,12 @@ Cameras.subscribe(value => {
 declare global {
   interface Document {
     BackendController?: BackendController;
+    BabbleControler?: PB_Controller;
   }
 }
 
 export const BackController = new BackendController("http://127.0.0.1:8000");
 window.document.BackendController = BackController;
+
+export const BabbleControler = new PB_Controller("http://127.0.0.1:4422");
+window.document.BabbleControler = BabbleControler;

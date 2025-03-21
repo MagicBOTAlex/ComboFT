@@ -1,5 +1,7 @@
 <script>
-    
+    import { BabbleControler } from "@src/store";
+
+
 </script>
 
 <div class="prose grid place-items-center h-full">
@@ -11,6 +13,7 @@
         <div class="py-4"></div>
         <div class="flex justify-end">
             <a href="/setup" class="btn btn-primary">Let's go!</a>
+            <button class="btn" on:click={()=>{BabbleControler.test()}}></button>
         </div>
     </div>
 </div>
