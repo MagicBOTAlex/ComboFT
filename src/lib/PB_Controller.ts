@@ -1,7 +1,7 @@
 import { PB_API } from "./PB_API";
 import { exists, readTextFile, writeTextFile, BaseDirectory, readDir  } from '@tauri-apps/plugin-fs';
 import { invoke } from '@tauri-apps/api/core';
-import { getCurrentDir } from "./RustInvoker";
+import { getCurrentDir, updateJsonProp } from "./RustInvoker";
 import * as path from '@tauri-apps/api/path';
 
 
@@ -14,6 +14,10 @@ export class PB_Controller {
         this.PB_Api = new PB_API(url);
 
         this.initConfig();
+    }
+
+    async test(){
+        await updateJsonProp(await this.getConfigPath(), {"version": 3});
     }
 
     async initConfig(){
