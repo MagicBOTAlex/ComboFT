@@ -1,6 +1,6 @@
+use serde_json::{Map, Value};
 use serialport::available_ports;
 use std::fs;
-use serde_json::{Value, Map};
 
 #[tauri::command]
 fn update_json_properties(file_path: String, updates_json: String) -> Result<(), String> {
@@ -91,6 +91,7 @@ fn get_current_dir() -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
@@ -99,7 +100,7 @@ pub fn run() {
             get_list_of_serial,
             get_json_value,
             get_current_dir
-        ])        
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

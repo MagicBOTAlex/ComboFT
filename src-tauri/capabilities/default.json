@@ -8,8 +8,25 @@
   "permissions": [
     "core:default",
     "opener:default",
-
-
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "../PB-Backend/dist/PB-Backend",
+          "sidecar": true
+        }
+      ]
+    },
+    {
+      "identifier": "shell:allow-kill",
+      "allow": [
+        {
+          "name": "../PB-Backend/dist/PB-Backend",
+          "sidecar": true
+        }
+      ]
+    },
+    "shell:allow-open",
     "fs:default",
     "fs:read-all",
     "fs:write-all",
@@ -20,7 +37,11 @@
     "fs:read-dirs",
     {
       "identifier": "fs:scope",
-      "allow": ["**/*"]
-    }
+      "allow": [
+        "**/*"
+      ]
+    },
+    "shell:default",
+    "shell:allow-spawn"
   ]
 }

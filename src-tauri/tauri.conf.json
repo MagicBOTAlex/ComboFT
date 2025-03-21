@@ -31,6 +31,9 @@
     "icon": [
       "../src/images/EyeTrackVR/ETVR_Logo.jpg",
       "../src/images/EyeTrackVR/ETVR_Logo.ico"
+    ],
+    "externalBin": [
+      "../PB-Backend/dist/PB-Backend"
     ]
   }
 }
