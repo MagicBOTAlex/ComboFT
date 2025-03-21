@@ -1,5 +1,5 @@
 import { PB_API } from "./PB_API";
-import { exists, BaseDirectory, readDir  } from '@tauri-apps/plugin-fs';
+import { exists, readTextFile, writeTextFile, BaseDirectory, readDir  } from '@tauri-apps/plugin-fs';
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentDir } from "./RustInvoker";
 import * as path from '@tauri-apps/api/path';
@@ -12,11 +12,28 @@ export class PB_Controller {
     constructor(url: string) {
         this.backendUrl = url;
         this.PB_Api = new PB_API(url);
+
+        this.initConfig();
     }
 
-    async test(){
-        let result = await exists(await path.join(await getCurrentDir(), '../PB-Backend/BabbleApp/babble_settings.json'));
-        alert(result);
+    async initConfig(){
+        let result = await exists(await this.getConfigPath());
+        if (!result){
+            this.loadDefaultConfig();
+        }
+    }
+
+    async getConfigPath(): Promise<string> {
+        return await path.join(await getCurrentDir(), '../PB-Backend/BabbleApp/babble_settings.json');
+    }
+
+    async getDefaultConfigPath(): Promise<string> {
+        return await path.join(await getCurrentDir(), '../PB-Backend/BabbleApp/default.json');
+    }
+
+    async loadDefaultConfig(){
+        let defaultConfigJson = await readTextFile(await this.getDefaultConfigPath());
+        await writeTextFile(await this.getConfigPath(), defaultConfigJson);
     }
 
     // Pass from api
