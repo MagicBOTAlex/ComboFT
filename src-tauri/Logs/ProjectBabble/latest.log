@@ -1,8 +1,11 @@
-2025-03-21 20:41:33 - ========== System Information ==========
-2025-03-21 20:41:33 - Operating System: Windows 10 (Version: 10.0.19045)
-2025-03-21 20:41:33 - Architecture: AMD64
-2025-03-21 20:41:33 - Processor: AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD
-2025-03-21 20:41:33 - Logical CPUs: 12
-2025-03-21 20:41:33 - Total Memory: 32691 MB
-2025-03-21 20:41:33 - Python Version: 3.11.11
-2025-03-21 20:41:33 - ========================================
+2025-03-21 22:53:19 - ========== System Information ==========
+2025-03-21 22:53:19 - Operating System: Windows 10 (Version: 10.0.19045)
+2025-03-21 22:53:19 - Architecture: AMD64
+2025-03-21 22:53:19 - Processor: AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD
+2025-03-21 22:53:19 - Logical CPUs: 12
+2025-03-21 22:53:19 - Total Memory: 32691 MB
+2025-03-21 22:53:19 - Python Version: 3.11.11
+2025-03-21 22:53:19 - ========================================
+2025-03-21 22:53:57 - [INFO] Exiting OSC Queue
+2025-03-21 22:53:58 - [INFO] Main exit
+2025-03-21 22:53:58 - [INFO] babble.exit
