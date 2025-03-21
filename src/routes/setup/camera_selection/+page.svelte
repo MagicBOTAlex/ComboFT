@@ -14,6 +14,8 @@
     import EtvrControls from "@src/routes/tracking/comps/ETVRControls.svelte";
     import { BackendController } from "@src/lib/BackendController";
 
+    let isLoading = false;
+
     async function onFinishClick(){
         const cameras_ = get(Cameras);
         Object.values(cameras_).map(x=>{
@@ -21,10 +23,14 @@
                 BackController.pushCameraAddr(x!);
         });
 
-        BackController.start();
+        // Timeout to actually push config
+        isLoading = true;
+        setTimeout(() => {
+            BackController.start();
+            isLoading = false;
+            goto('/setup/testing_con');
+        }, 3000);
         // console.log( await ETVRController.getTrackingCameraStream(TrackerPosition.Left, CameraStreamType.Raw));
-
-        goto('/setup/testing_con');
     }
 
     const forceReloadInterval = setInterval(forceReload, 3000);
@@ -49,7 +55,7 @@
         BackController.Stop();
     });
 
-    let enableBabble: boolean = false;
+    let enableBabble: boolean = true;
 </script>
 
 <Tabs enabled={["tab-active", "tab-disabled", "tab-disabled"]}/>
@@ -75,9 +81,15 @@
             </div>
             <div class="py-4"></div>
             <div class="p-4 overflow-hidden" >
-                <button on:click={onFinishClick} class="btn btn-primary w-full {isRunning ? "btn-disabled":""}">
-                    {#if isRunning}
-                        <div class="flex">Waiting for ETVR to shutdown... <span class="loading loading-spinner loading-md ml-2"></span></div>
+                <button on:click={onFinishClick} class="btn btn-primary w-full {isRunning || isLoading ? "btn-disabled":""}">
+                    {#if isRunning || isLoading}
+                        <div class="flex">
+                            {#if isRunning}
+                            Waiting for ETVR to shutdown...
+                            {:else if isLoading}
+                            Waiting for backend startup...
+                            {/if} 
+                            <span class="loading loading-spinner loading-md ml-2"></span></div>
                     {:else}
                     Next
                     {/if}

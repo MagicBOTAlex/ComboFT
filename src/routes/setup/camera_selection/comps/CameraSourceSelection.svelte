@@ -74,7 +74,7 @@
             };
         });
 
-        console.log(get(Cameras)[position]); // Debugging (optional)
+        // console.log(get(Cameras)[position]); // Debugging (optional)
     }
 
     function updateSourceType(sourceType: CameraSourceType) {
@@ -83,7 +83,7 @@
     
     function setAddr(addr: string) {
         selectedCameraAddress = addr;
-        updateCameraField("isEnabled", selectedSourceType != CameraSourceType.None && addr != "" && addr != undefined);
+        updateCameraField("isEnabled", selectedSourceType != CameraSourceType.None && addr);
         updateCameraField("addr", addr);
     }
 
@@ -151,7 +151,7 @@
             <select
                 on:change={()=> {setTimeout(() => {
                     setAddr(serialSelector.value);
-                }, 10);}}
+                }, 0);}}
                 bind:this={serialSelector}
                 class="select select-primary text-base-content"
             >
