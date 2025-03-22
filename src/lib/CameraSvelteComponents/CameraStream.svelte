@@ -8,7 +8,6 @@
     import type { Camera } from "../structs/Camera";
 
     export let camera: Camera | undefined;
-    export let cameraRotation: number = 0;
     export let streamType: CameraStreamType = CameraStreamType.Raw;
     export let imageElement: HTMLImageElement | undefined = undefined;
     export let mousedown: ((e: MouseEvent) => void) | undefined = undefined;
@@ -64,7 +63,7 @@
 <div class="flex justify-center place-items-center w-full h-full {loading?"":""}">
     <div class="{loading?"w-16 h-16 loading loading-spinner bg-base-300":"hidden"}"></div>
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <img bind:this={imageElement} src="{videoStreamSource + "?t=" + timestamp}" class="w-full h-full object-contain {loading?"hidden":""}" style="transform: rotate({cameraRotation}deg);" alt="cam stream"
+    <img bind:this={imageElement} src="{videoStreamSource + "?t=" + timestamp}" class="w-full h-full object-contain {loading?"hidden":""}" alt="cam stream"
     on:mousedown={(e)=>{if(mousedown){mousedown(e)}}}
     on:mousemove={(e)=>{if(mousemove){mousemove(e)}}}
     on:mouseup={(e)=>{if(mouseup){mouseup(e)}}}

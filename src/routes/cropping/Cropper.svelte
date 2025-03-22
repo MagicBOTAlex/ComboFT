@@ -1,9 +1,12 @@
 <script lang="ts">
-  import { Box } from "@src/lib/structs/Box";
-    import { Maximize2 } from "lucide-svelte";
+  import CameraStream from "@src/lib/CameraSvelteComponents/CameraStream.svelte";
+  import { ROIBox } from "@src/lib/structs/Box";
+  import type { Camera } from "@src/lib/structs/Camera";
+  import { Maximize2 } from "lucide-svelte";
   import { onMount } from "svelte";
 
-  export let onFinishCropping: (finalBox: Box) => void | undefined;
+  export let onFinishCropping: (finalBox: ROIBox) => void | undefined;
+  export let cam: Camera;
   
   // DOM elements
   let container: HTMLDivElement;
@@ -79,11 +82,17 @@
       const scaleX = image.naturalWidth / imageRect.width;
       const scaleY = image.naturalHeight / imageRect.height;
 
-      const finalBox = new Box(
+      // Convert radians to degrees and log with degree symbol
+      const currentRotationDeg = (getCurrentRotation() * (180 / Math.PI));
+      const mappedRotation = (-currentRotationDeg + 360) % 360;
+      console.log(mappedRotation);
+
+      const finalBox = new ROIBox(
           Math.round(selectionBox.x * scaleX),
           Math.round(selectionBox.y * scaleY),
           Math.round(selectionBox.width * scaleX),
-          Math.round(selectionBox.height * scaleY)
+          Math.round(selectionBox.height * scaleY),
+          Math.round(mappedRotation)
       );
 
       onFinishCropping?.(finalBox);
@@ -100,32 +109,31 @@
   }
 
   function rotationGrab(event: MouseEvent) {
-      event.preventDefault();
-      event.stopPropagation();
-      isDragging = true;
-      handle.classList.replace('cursor-grab', 'cursor-grabbing');
+    event.preventDefault();
+    event.stopPropagation();
+    isDragging = true;
+    handle.classList.replace('cursor-grab', 'cursor-grabbing');
 
-      const rect = square.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
-      
-      currentRotation = getCurrentRotation();
-      startAngle = currentRotation - mouseAngle;
+    const rect = square.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+    
+    currentRotation = getCurrentRotation();
+    startAngle = currentRotation - mouseAngle;
   }
 
   function rotationMouseMove(event: MouseEvent) {
-      if (!isDragging) return;
-      const rect = square.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
-      const degrees = (mouseAngle + startAngle) * (180 / Math.PI);
-      square.style.transform = `rotate(${degrees}deg)`;
-
-      // Convert radians to degrees and log with degree symbol
-      const currentRotationDeg = (getCurrentRotation() * (180 / Math.PI));
-      console.log(`${currentRotationDeg.toFixed(2)}°`);
+    if (!isDragging) return;
+    const rect = square.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+    const degrees = (mouseAngle + startAngle) * (180 / Math.PI);
+    square.style.transform = `rotate(${degrees}deg)`;
+    // const currentRotationDeg = (getCurrentRotation() * (180 / Math.PI));
+    // const mappedRotation = (currentRotationDeg + 360) % 360;
+    // console.log(mappedRotation);
   }
 
   function rotationUngrab() {
@@ -158,12 +166,7 @@
           style="transform: rotate(0deg)"
       >
           <!-- svelte-ignore a11y_img_redundant_alt -->
-          <img
-              src="https://img.flawlessfiles.com/_r/100x100/100/avatar/dragon_ball/av-db-02.jpeg"
-              alt="Rotatable Image"
-              class="w-full h-full object-cover"
-              bind:this={image}
-          />
+          <CameraStream camera={cam} bind:imageElement={image} />
 
           <div class="absolute left-1/2 -translate-x-1/2 top-full w-px h-[0.5cm] border border-dashed border-secondary"></div>
             <div
@@ -208,8 +211,3 @@
       ></div>
   {/if}
 </div>
-
-<style>
-  .cursor-grab { cursor: grab; }
-  .cursor-grabbing { cursor: grabbing; }
-</style>

@@ -1,6 +1,6 @@
 import { ETApi} from "./ET_API";
 import { Logger } from "./Logger";
-import type { Box } from "./structs/Box";
+import type { ROIBox } from "./structs/Box";
 import type { Camera } from "./structs/Camera";
 import { CameraStreamType, getStreamTypeAPIName } from "./structs/CameraStreamType";
 import type { ET_Algorithms } from "./structs/ET_Api/ET_Algorithms";
@@ -54,7 +54,9 @@ export class BackendController {
             }
         }, 6000);
         this.pushConfig();
-        this.ET_Api.startETVR();
+        await this.ET_Api.startETVR();
+        await this.ET_Api.startETVR();
+        await this.ET_Api.startETVR();
 
         this.babbleController.start();
     }
@@ -197,7 +199,7 @@ export class BackendController {
         }
     }
 
-    public async pushCrop(position: TrackerPosition, croppingBox: Box) {
+    public async pushCrop(position: TrackerPosition, croppingBox: ROIBox) {
         if (position != TrackerPosition.Babble) {
             try {
     
@@ -208,13 +210,14 @@ export class BackendController {
                             this.ET_Config!.trackers[i].camera.roi_y = croppingBox.y;
                             this.ET_Config!.trackers[i].camera.roi_w = croppingBox.w;
                             this.ET_Config!.trackers[i].camera.roi_h = croppingBox.h;
+                            this.ET_Config!.trackers[i].camera.rotation = croppingBox.rotation;
                             
                         } else {
                             this.ET_Config!.trackers[i].camera.roi_x = null;
                             this.ET_Config!.trackers[i].camera.roi_y = null;
                             this.ET_Config!.trackers[i].camera.roi_w = null;
                             this.ET_Config!.trackers[i].camera.roi_h = null;
-                            
+                            this.ET_Config!.trackers[i].camera.rotation = null;
                         }
                     }
                 }
@@ -228,12 +231,14 @@ export class BackendController {
                     roi_window_x: croppingBox.x,
                     roi_window_y: croppingBox.y,
                     roi_window_w: croppingBox.w,
-                    roi_window_h: croppingBox.h
+                    roi_window_h: croppingBox.h,
+                    rotation_angle: croppingBox.rotation
                 } : {
                     roi_window_x: null,
                     roi_window_y: null,
                     roi_window_w: null,
-                    roi_window_h: null
+                    roi_window_h: null,
+                    rotation_angle: null
                 };
     
                 this.babbleController.updateConfig({
@@ -245,6 +250,18 @@ export class BackendController {
                 Logger.log('error', 'Failed to push crop', error);
             }
         }
+    }
+
+    public async resetRotation(cam: Camera){
+        if (cam.position == TrackerPosition.Babble) return;
+
+        for (let i = 0; i < this.ET_Config!.trackers.length; i++) {
+            if (this.ET_Config!.trackers[i]?.tracker_position == await this.getETVRName(cam.position)){
+                this.ET_Config!.trackers[i].camera.rotation = 0;
+            }
+        }
+
+        this.pushConfig();
     }
 
     public async getCameraAlgorithems(cam: Camera): Promise<ET_Algorithms[] | undefined> {

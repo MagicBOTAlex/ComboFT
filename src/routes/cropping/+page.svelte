@@ -9,22 +9,26 @@
     import { CameraStreamType } from '@src/lib/structs/CameraStreamType';
     import { onDestroy } from 'svelte';
     import Cropper from './Cropper.svelte';
-    import type { Box } from '@src/lib/structs/Box';
+    import type { ROIBox } from '@src/lib/structs/Box';
+    import { goto } from '$app/navigation';
 
     $: params = new URLSearchParams(page.url.search);
     $: cam = params.get('cam'); // Raw URL param (string)
     $: sender = params.get('sender');
 
     let cropSet: boolean = false;
-
     let croppingCam: Camera | undefined;
+    let finalBox: ROIBox | undefined;
 
     onMount(async ()=>{
         croppingCam = get(Cameras)[cam as TrackerPosition];
+        if (croppingCam.position != TrackerPosition.Babble){
+            BackController.resetRotation(croppingCam);
+        }
     });
 
-    function onFinishCropping(finalBox: Box) {
-        BackController.pushCrop(cam as TrackerPosition, finalBox);
+    function onFinishCropping(box: ROIBox) {
+        finalBox = box;
         cropSet = true;
     }
 
@@ -39,6 +43,12 @@
     function reloadStream(){
         timestamp = new Date().getTime();
     }
+
+    async function onConfirm(){
+        goto(sender + "?cam=" + croppingCam?.position);
+        if (finalBox)
+            await BackController.pushCrop(cam as TrackerPosition, finalBox);
+    }
 </script>
 
 <div class="grid h-full place-content-center">
@@ -50,13 +60,11 @@
         <div class="divider -mx-20"></div>
         <div class="p-4 border border-base-200 bg-grid rounded-lg">
             <div class="w-full h-full">
-                {#if croppingCam ||true}
-                    <Cropper {onFinishCropping} camera={croppingCam}/>
-                {/if}
+                <Cropper {onFinishCropping} cam={croppingCam!}/>
             </div>
         </div>
         <div class="mt-10">
-            <a href="{sender}?cam={croppingCam?.position}" class="btn btn-primary {cropSet?"": "btn-disabled"} w-full">Done</a>
+            <button on:click={onConfirm} class="btn btn-primary {cropSet?"": "btn-disabled"} w-full">Done</button>
         </div>
     </div>
 </div>

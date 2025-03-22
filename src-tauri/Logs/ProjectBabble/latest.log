@@ -1,21 +1,11 @@
-2025-03-22 15:38:51 - ========== System Information ==========
-2025-03-22 15:38:51 - Operating System: Windows 10 (Version: 10.0.19045)
-2025-03-22 15:38:51 - Architecture: AMD64
-2025-03-22 15:38:51 - Processor: AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD
-2025-03-22 15:38:51 - Logical CPUs: 12
-2025-03-22 15:38:51 - Total Memory: 32691 MB
-2025-03-22 15:38:51 - Python Version: 3.11.11
-2025-03-22 15:38:51 - ========================================
-2025-03-22 15:38:51 - Processor loop
-2025-03-22 15:38:51 - [WARN] info.enterCaptureOne http://192.168.50.44/ info.enterCaptureTwo
-2025-03-22 15:38:51 - Started camera thread
-2025-03-22 15:38:56 - [WARN] info.enterCaptureOne http://192.168.50.44/ info.enterCaptureTwo
-2025-03-22 15:42:06 - Reloading config
-2025-03-22 15:42:06 - Config loaded
-2025-03-22 15:42:06 - Config loaded
-2025-03-22 15:42:29 - Reloading config
-2025-03-22 15:42:29 - Config loaded
-2025-03-22 15:42:29 - Config loaded
-2025-03-22 15:42:31 - Reloading config
-2025-03-22 15:42:31 - Config loaded
-2025-03-22 15:42:31 - Config loaded
+2025-03-22 23:48:08 - ========== System Information ==========
+2025-03-22 23:48:08 - Operating System: Windows 10 (Version: 10.0.19045)
+2025-03-22 23:48:08 - Architecture: AMD64
+2025-03-22 23:48:08 - Processor: AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD
+2025-03-22 23:48:08 - Logical CPUs: 12
+2025-03-22 23:48:08 - Total Memory: 32691 MB
+2025-03-22 23:48:08 - Python Version: 3.11.11
+2025-03-22 23:48:08 - ========================================
+2025-03-22 23:48:08 - Processor loop
+2025-03-22 23:48:08 - [WARN] info.enterCaptureOne http://192.168.50.44/ info.enterCaptureTwo
+2025-03-22 23:48:08 - Started camera thread

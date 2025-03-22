@@ -1,7 +1,7 @@
 
 export interface ET_CameraSettings {
     capture_source: string;
-    rotation: number;
+    rotation: number | null;
     threshold: number;
     focal_length: number;
     flip_x_axis: boolean;
