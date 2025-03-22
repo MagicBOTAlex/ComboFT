@@ -18,6 +18,10 @@ export class PB_Controller {
         this.PB_Api = PB_Api;
         this.backendUrl = PB_Api.baseUrl;
         this.backendCommand = Command.sidecar('../PB-Backend/dist/PB-Backend'); 
+        this.backendCommand.on('error', error => console.error(`command error: "${error}"`));
+        this.backendCommand.stdout.on('data', line => console.log(`command stdout: "${line}"`));
+        this.backendCommand.stderr.on('data', line => console.log(`command stderr: "${line}"`));
+
 
         this.initConfig();
     }

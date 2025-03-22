@@ -195,6 +195,7 @@ export class BackendController {
             try {
                 if (!cam.position) return;
                 const uuid = await this.ensureTrackerUuid(cam.position);
+                Logger.log('info', 'Pushing ' + cam.position + "camera config. with: " + cam.addr);
                 await this.ET_Api.updateTracker(uuid, {
                     camera: { capture_source: cam.addr }
                 });

@@ -28,15 +28,15 @@ export class PB_API {
 
   // Streaming endpoints
   async getRawCameraFeed() {
-    return this.baseUrl + 'camera/raw/';
+    return this.baseUrl + '/camera/raw';
   }
 
   async getCroppedCameraFeed() {
-    return this.baseUrl + ('camera/cropped/');
+    return this.baseUrl + ('/camera/cropped');
   }
 
   async getProcessedCameraFeed() {
-    return this.baseUrl + ('camera/processed/');
+    return this.baseUrl + ('/camera/processed');
   }
 
   // Calibration endpoints

@@ -83,7 +83,11 @@
     
     function setAddr(addr: string) {
         selectedCameraAddress = addr;
-        updateCameraField("isEnabled", selectedSourceType != CameraSourceType.None && addr);
+        if (selectedSourceType != CameraSourceType.None && addr){
+            updateCameraField("isEnabled", true);
+        }else {
+            updateCameraField("isEnabled", true);
+        }
         updateCameraField("addr", addr);
     }
 

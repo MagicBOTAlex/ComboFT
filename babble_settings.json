@@ -6,10 +6,10 @@
     "roi_window_y": 0,
     "roi_window_w": 0,
     "roi_window_h": 0,
-    "capture_source": "http://192.168.50.44/",
+    "capture_source": null,
     "gui_vertical_flip": false,
     "gui_horizontal_flip": false,
-    "use_ffmpeg": true
+    "use_ffmpeg": false
   },
   "settings": {
     "gui_min_cutoff": "0.9",
