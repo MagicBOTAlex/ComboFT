@@ -57,6 +57,7 @@ export class PB_Controller {
 
     async updateConfig(json: Record<string, any>){
         await updateJsonProp(await this.getConfigPath(), json);
+        await this.PB_Api.notifyBackendConfigChange();
     }
 
     async getConfigPath(): Promise<string> {

@@ -19,8 +19,7 @@
     async function onFinishClick(){
         const cameras_ = get(Cameras);
         Object.values(cameras_).map(async x=>{
-            if (x.isEnabled)
-                await BackController.pushCameraAddr(x!);
+            await BackController.pushCameraAddr(x!);
         });
 
         // Timeout to actually push config

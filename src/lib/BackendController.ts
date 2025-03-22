@@ -18,7 +18,7 @@ export class BackendController {
     ET_Status: BackendStatus = BackendStatus.Stopped;
     ET_Api: ETApi; // Oh shit, TS supports this (props)? I love it!!!
     ET_Config: ET_Config |undefined;
-    ET_UUIDs: Partial<Record<TrackerPosition, string | undefined>> = {}; // I Really hate this UUID system. We're never going to have that many cameras!!! Other things will break down long before.
+    // Fuck the UUID system. doesn't work correctly
     store: Writable<BackendController> | any;
 
     PB_Api: PB_API;
@@ -53,6 +53,7 @@ export class BackendController {
                 this.pushConfig();
             }
         }, 6000);
+        this.pushConfig();
         this.ET_Api.startETVR();
 
         this.babbleController.start();
@@ -94,6 +95,7 @@ export class BackendController {
             try {
                 const newStatus = await this.ET_Api.getETVRStatus();
                 const newStatusEnum = newStatus ? BackendStatus.Running : BackendStatus.Stopped;
+                this.getConfig();
                 
                 if (newStatusEnum !== this.ET_Status) {
                     Logger.log('info', `ETVR ${newStatus ? 'now running...' : 'stopped.'}`);
@@ -112,16 +114,13 @@ export class BackendController {
         return BackendStatus.Stopped;
     }
 
-    private async ensureTrackerUuid(position: TrackerPosition): Promise<string> {
-        if (!this.ET_UUIDs[position]) {
-            const trackerConf = await this.getTrackingCameraConfig(position);
-            if (!trackerConf?.uuid) {
-                Logger.log('error', `Failed to get UUID for position ${position}`);
-                throw new Error(`Missing UUID for ${position}`);
-            }
-            this.ET_UUIDs[position] = trackerConf.uuid;
+    async getUUID(position: TrackerPosition): Promise<string>{
+        for (let i = 0; i < this.ET_Config!.trackers.length; i++) {
+            const element = this.ET_Config?.trackers[i];
+            if (element?.tracker_position == await this.getETVRName(position))
+                return element.uuid;
         }
-        return this.ET_UUIDs[position]!;
+        return "";
     }
 
     // Here comes the powerful stuff by making this class:
@@ -130,9 +129,8 @@ export class BackendController {
         if (position != TrackerPosition.Babble)
         {
             try {
-                const uuid = await this.ensureTrackerUuid(position);
                 const streamAPIName = getStreamTypeAPIName(streamType);
-                return `${this.ET_Api.baseURL}/etvr/feed/${uuid}/${streamAPIName}`;
+                return `${this.ET_Api.baseURL}/etvr/feed/${await this.getUUID(position)}/${streamAPIName}`;
             } catch (error) {
                 Logger.log('error', 'Failed to get camera stream URL', error);
                 return "";
@@ -155,26 +153,13 @@ export class BackendController {
         const names = {
             [TrackerPosition.Left]: "left_eye",
             [TrackerPosition.Right]: "right_eye",
-            [TrackerPosition.Babble]: "mouth",
+            [TrackerPosition.Babble]: "",
         };
         
         if (!(position in names)) {
             throw new Error("Invalid tracking position");
         }
         return names[position];
-    }
-
-    public async getTrackingCameraConfig(position: TrackerPosition): Promise<TrackerConfig | undefined> {
-        try {
-            if (!this.ET_Config) await this.getConfig();
-            const trackerName = await this.getETVRName(position);
-            return this.ET_Config?.trackers.find(
-                t => t.tracker_position === trackerName
-            );
-        } catch (error) {
-            Logger.log("warn", "No tracker found", error);
-            return undefined;
-        }
     }
 
     async pushConfig() {
@@ -194,11 +179,12 @@ export class BackendController {
         if (cam.position != TrackerPosition.Babble){
             try {
                 if (!cam.position) return;
-                const uuid = await this.ensureTrackerUuid(cam.position);
                 Logger.log('info', 'Pushing ' + cam.position + "camera config. with: " + cam.addr);
-                await this.ET_Api.updateTracker(uuid, {
-                    camera: { capture_source: cam.addr }
-                });
+                for (let i = 0; i < this.ET_Config!.trackers.length; i++) {
+                    if (this.ET_Config!.trackers[i]?.tracker_position == await this.getETVRName(cam.position)){
+                        this.ET_Config!.trackers[i].camera.capture_source = cam.addr;
+                    }
+                }
             } catch (error) {
                 Logger.log('error', 'Failed to push camera address', error);
             }
@@ -214,22 +200,25 @@ export class BackendController {
     public async pushCrop(position: TrackerPosition, croppingBox: Box) {
         if (position != TrackerPosition.Babble) {
             try {
-                const uuid = await this.ensureTrackerUuid(position);
-                const update = croppingBox.isValid() ? {
-                    roi_x: croppingBox.x,
-                    roi_y: croppingBox.y,
-                    roi_w: croppingBox.w,
-                    roi_h: croppingBox.h
-                } : {
-                    roi_x: null,
-                    roi_y: null,
-                    roi_w: null,
-                    roi_h: null
-                };
     
-                await this.ET_Api.updateTracker(uuid, {
-                    camera: update
-                });
+                for (let i = 0; i < this.ET_Config!.trackers.length; i++) {
+                    if (this.ET_Config!.trackers[i]?.tracker_position == await this.getETVRName(position)){
+                        if (croppingBox.isValid()){
+                            this.ET_Config!.trackers[i].camera.roi_x = croppingBox.x;
+                            this.ET_Config!.trackers[i].camera.roi_y = croppingBox.y;
+                            this.ET_Config!.trackers[i].camera.roi_w = croppingBox.w;
+                            this.ET_Config!.trackers[i].camera.roi_h = croppingBox.h;
+                            
+                        } else {
+                            this.ET_Config!.trackers[i].camera.roi_x = null;
+                            this.ET_Config!.trackers[i].camera.roi_y = null;
+                            this.ET_Config!.trackers[i].camera.roi_w = null;
+                            this.ET_Config!.trackers[i].camera.roi_h = null;
+                            
+                        }
+                    }
+                }
+                this.pushConfig();
             } catch (error) {
                 Logger.log('error', 'Failed to push crop', error);
             }
@@ -260,7 +249,7 @@ export class BackendController {
 
     public async getCameraAlgorithems(cam: Camera): Promise<ET_Algorithms[] | undefined> {
         try {
-            const uuid = await this.ensureTrackerUuid(cam.position);
+            const uuid = await this.getUUID(cam.position);
             const tracker = await this.ET_Api.getTracker(uuid);
             return tracker?.algorithm?.algorithm_order;
         } catch (error) {
@@ -272,7 +261,7 @@ export class BackendController {
     // Pushes the algorithems and their order to the back-end config
     public async pushCameraAlgorithems(cam: Camera, algoList: ET_Algorithms[]) {
         try {
-            const uuid = await this.ensureTrackerUuid(cam.position);
+            const uuid = await this.getUUID(cam.position);
             await this.ET_Api.updateTracker(uuid, {
                 algorithm: { algorithm_order: algoList }
             });
@@ -284,7 +273,7 @@ export class BackendController {
     public async startCalibration(position: TrackerPosition) {
         try {
             if (position != TrackerPosition.Babble){
-                const uuid = await this.ensureTrackerUuid(position);
+                const uuid = await this.getUUID(position);
                 await this.ET_Api.updateTracker(uuid, {
                     calibrationData: { min_x: Math.random() * 11 - 100 }
                 });

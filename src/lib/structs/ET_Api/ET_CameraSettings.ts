@@ -6,8 +6,8 @@ export interface ET_CameraSettings {
     focal_length: number;
     flip_x_axis: boolean;
     flip_y_axis: boolean;
-    roi_x: number;
-    roi_y: number;
-    roi_w: number;
-    roi_h: number;
+    roi_x: number | null;
+    roi_y: number | null;
+    roi_w: number | null;
+    roi_h: number | null;
 }

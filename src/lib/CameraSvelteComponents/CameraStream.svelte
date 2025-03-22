@@ -21,7 +21,7 @@
     let loading: boolean = true;
 
 
-    const interval = setInterval(reloadStream, camera!.position == TrackerPosition.Babble ? 1500 : 500); // Probs a better way like using js to get blobs. but works for now
+    const interval = setInterval(reloadStream, 500); // Probs a better way like using js to get blobs. but works for now
     function reloadStream(){
         // console.log(imageElement!.naturalHeight);
         if (imageElement && camera) {

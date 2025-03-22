@@ -1,127 +1,117 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-  
-    let list: HTMLUListElement;
-    let draggedItem: HTMLLIElement | null = null;
-  
-    // Record positions of all list items within the container.
-    function recordPositions(container: HTMLUListElement): Map<HTMLLIElement, DOMRect> {
-      const positions = new Map<HTMLLIElement, DOMRect>();
-      container.querySelectorAll("li").forEach((child: Element) => {
-        const li = child as HTMLLIElement;
-        positions.set(li, li.getBoundingClientRect());
-      });
-      return positions;
-    }
-  
-    // Animate list items (except the dragged one) from their old to new positions.
-    function animateListReorder(container: HTMLUListElement, oldPositions: Map<HTMLLIElement, DOMRect>): void {
-      container.querySelectorAll("li").forEach((child: Element) => {
-        const li = child as HTMLLIElement;
-        if (li.classList.contains("dragging")) return;
-        const oldRect = oldPositions.get(li);
-        if (!oldRect) return;
-        const newRect = li.getBoundingClientRect();
-        const deltaX = oldRect.left - newRect.left;
-        const deltaY = oldRect.top - newRect.top;
-        if (deltaX || deltaY) {
-          li.style.transition = "none";
-          li.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-          // Force reflow.
-          li.getBoundingClientRect();
-          li.style.transition = "transform 300ms";
-          li.style.transform = "";
-        }
-      });
-    }
-  
-    // Return the <li> element after which the dragged item should be inserted.
-    function getDragAfterElement(container: HTMLUListElement, y: number): HTMLLIElement | null {
-      const draggableElements = Array.from(container.querySelectorAll("li:not(.dragging)")) as HTMLLIElement[];
-      return draggableElements.reduce(
-        (closest, child) => {
-          const box = child.getBoundingClientRect();
-          const offset = y - box.top - box.height / 2;
-          if (offset < 0 && offset > closest.offset) {
-            return { offset, element: child };
-          }
-          return closest;
-        },
-        { offset: Number.NEGATIVE_INFINITY, element: null as HTMLLIElement | null }
-      ).element;
-    }
-  
-    onMount(() => {
-      // Attach event listeners to all <li> elements.
-      list.querySelectorAll("li").forEach((item: Element) => {
-        const li = item as HTMLLIElement;
-        li.draggable = true;
-        li.addEventListener("dragstart", (e: DragEvent) => {
-          draggedItem = li;
-          li.classList.add("dragging", "opacity-50", "scale-105");
-          if (e.dataTransfer) {
-            e.dataTransfer.effectAllowed = "move";
-            // Some browsers require data to be set for drop to work.
-            e.dataTransfer.setData("text/plain", "");
-          }
-        });
-  
-        li.addEventListener("dragend", () => {
-          if (draggedItem) {
-            draggedItem.classList.remove("dragging", "opacity-50", "scale-105");
-          }
-          draggedItem = null;
-        });
-      });
-  
-      // Attach listeners to the list container.
-      list.addEventListener("dragover", (e: DragEvent) => {
-        e.preventDefault();
-        if (e.dataTransfer) {
-          e.dataTransfer.dropEffect = "move";
-        }
-        const oldPositions = recordPositions(list);
-        const afterElement = getDragAfterElement(list, e.clientY);
-        if (draggedItem) {
-          if (afterElement === null) {
-            list.appendChild(draggedItem);
-          } else {
-            list.insertBefore(draggedItem, afterElement);
-          }
-        }
-        animateListReorder(list, oldPositions);
-      });
-  
-      list.addEventListener("drop", (e: DragEvent) => {
-        e.preventDefault();
-      });
-    });
-  </script>
-  
-  <svelte:head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reorderable List</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </svelte:head>
-  
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white p-5 shadow-md rounded-md w-64">
-      <h2 class="text-lg font-semibold mb-3">Reorderable List</h2>
-      <ul bind:this={list} class="border p-3 space-y-2 min-h-[150px]">
-        <li class="p-2 bg-blue-500 text-white rounded cursor-pointer transition-transform duration-300">
-          Item 1
-        </li>
-        <li class="p-2 bg-blue-500 text-white rounded cursor-pointer transition-transform duration-300">
-          Item 2
-        </li>
-        <li class="p-2 bg-blue-500 text-white rounded cursor-pointer transition-transform duration-300">
-          Item 3
-        </li>
-        <li class="p-2 bg-blue-500 text-white rounded cursor-pointer transition-transform duration-300">
-          Item 4
-        </li>
-      </ul>
-    </div>
+  // We'll reference our DOM elements:
+  let square: HTMLDivElement;
+  let handle: HTMLDivElement;
+
+  let isDragging = false;
+  let startAngle = 0;       
+  let currentRotation = 0;  
+
+  /**
+   * Retrieves the current rotation (in radians) of the square from its CSS transform matrix.
+   */
+  function getCurrentRotation(): number {
+    // If there's no transform applied yet, it's 0
+    const transform = window.getComputedStyle(square).getPropertyValue('transform');
+    if (transform === 'none') return 0;
+
+    // Extract the matrix(...) values
+    const matrixMatch = transform.match(/^matrix\((.+)\)$/);
+    if (!matrixMatch) return 0;
+
+    const values = matrixMatch[1].split(', ');
+    const a = parseFloat(values[0]);
+    const b = parseFloat(values[1]);
+
+    // The rotation in radians is given by atan2(b, a)
+    return Math.atan2(b, a);
+  }
+
+  /**
+   * Called when the user presses the mouse button down on the circle handle.
+   */
+  function handleMouseDown(event: MouseEvent) {
+    event.preventDefault();
+    isDragging = true;
+
+    // Update the circle's cursor style
+    handle.classList.remove('cursor-grab');
+    handle.classList.add('cursor-grabbing');
+
+    // Compute the center of the square
+    const rect = square.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    // Calculate angle from the square's center to the mouse pointer
+    const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+
+    // Get the square's current rotation
+    currentRotation = getCurrentRotation();
+
+    // startAngle is the offset between the square's rotation and the mouse angle
+    startAngle = currentRotation - mouseAngle;
+  }
+
+  /**
+   * Called whenever the mouse moves anywhere in the window (while our component is loaded).
+   */
+  function handleMouseMove(event: MouseEvent) {
+    if (!isDragging) return;
+
+    // Recompute the angle from the square’s center to the mouse
+    const rect = square.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+
+    // Add offset, convert to degrees, update the square's rotation
+    const newAngle = mouseAngle + startAngle;
+    const degrees = newAngle * (180 / Math.PI);
+    console.log(degrees);
+    square.style.transform = `rotate(${degrees}deg)`;
+  }
+
+  /**
+   * Called when the user releases the mouse button anywhere in the window.
+   */
+  function handleMouseUp() {
+    isDragging = false;
+
+    // Switch the handle's cursor style back
+    handle.classList.remove('cursor-grabbing');
+    handle.classList.add('cursor-grab');
+  }
+</script>
+
+<!-- 
+  Capture mousemove and mouseup globally using <svelte:window>. 
+  This ensures we keep rotating even if the user drags outside the square.
+-->
+<svelte:window
+  on:mousemove={handleMouseMove}
+  on:mouseup={handleMouseUp}
+/>
+
+<!-- The square we want to rotate -->
+<div class="w-full h-full grid place-items-center">
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div
+  bind:this={square}
+  class="relative w-40 h-40 bg-gray-700 transform origin-center overflow-visible"
+>
+    <!-- A thin line (2cm high) that starts at the bottom of the square -->
+    <div
+      class="absolute left-1/2 -translate-x-1/2 top-full w-px h-[2cm] bg-blue-500"
+    ></div>
+
+    <!-- The draggable circle handle, ~2cm below the square -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div
+      bind:this={handle}
+      class="absolute left-1/2 -translate-x-1/2 top-full mt-[2cm]
+            w-6 h-6 bg-blue-500 rounded-full cursor-grab z-10"
+      on:mousedown={handleMouseDown}
+    ></div>
   </div>
-  
+</div>

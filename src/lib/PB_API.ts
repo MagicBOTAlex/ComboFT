@@ -48,14 +48,19 @@ export class PB_API {
     return this.getRequest('/calibrate/status');
   }
 
+  
   async setCalibrationUsage(targetState: number) {
     return this.getRequest('/calibrate/set', { targetState });
   }
-
+  
   // Control endpoints
   async shutdown() {
     const url = new URL(`${this.baseUrl}/shutdown`);
     // Fire-and-forget: Don't await to avoid blocking, catch errors silently
     fetch(url.toString()).catch(() => { });
+  }
+
+  async notifyBackendConfigChange() {
+    return this.getRequest('/config/reload');
   }
 }
