@@ -49,8 +49,8 @@
         </div>
         <div class="divider -mx-20"></div>
         <div class="p-4 bg-base-200 rounded-lg">
-            <div class="w-80 h-80">
-                {#if croppingCam}
+            <div class="w-full h-full">
+                {#if croppingCam ||true}
                     <Cropper {onFinishCropping} camera={croppingCam}/>
                 {/if}
             </div>

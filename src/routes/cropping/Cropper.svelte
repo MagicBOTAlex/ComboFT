@@ -1,131 +1,198 @@
 <script lang="ts">
-    import CameraStream from "@src/lib/CameraSvelteComponents/CameraStream.svelte";
-    import { Box } from "@src/lib/structs/Box";
-    import type { Camera } from "@src/lib/structs/Camera";
-    import { onMount } from "svelte";
+  import { Box } from "@src/lib/structs/Box";
+  import { onMount } from "svelte";
 
-    // TODO: Add pausing.
-
-    export let onFinishCropping: (finalBox: Box) => void | undefined;
-    export let camera: Camera;
-
+  export let onFinishCropping: (finalBox: Box) => void | undefined;
   
-    let image: HTMLImageElement;
-    let selectionBox = { x: 0, y: 0, width: 0, height: 0 };
-    let finalSelectionBox: { x: number; y: number; width: number; height: number } | null = null;
-    let isSelecting = false;
-    let hasMoved = false;
-    let startX = 0;
-    let startY = 0;
-  
-    const handleMouseDown = (event: MouseEvent) => {
-      event.preventDefault(); // Prevent image dragging
+  // DOM elements
+  let container: HTMLDivElement;
+  let square: HTMLDivElement;
+  let handle: HTMLDivElement;
+  let image: HTMLImageElement;
+
+  // Rotation state
+  let isDragging = false;
+  let startAngle = 0;
+  let currentRotation = 0;
+
+  // Selection state
+  let selectionBox = { x: 0, y: 0, width: 0, height: 0 };
+  let finalSelectionBox: { x: number; y: number; width: number; height: number } | null = null;
+  let isSelecting = false;
+  let hasMoved = false;
+  let imageOffsetX = 0;
+  let imageOffsetY = 0;
+
+  const handleMouseDown = (event: MouseEvent) => {
+      if (event.target === handle) return;
+      event.preventDefault();
       isSelecting = true;
       hasMoved = false;
-      const rect = image.getBoundingClientRect();
-      startX = event.clientX - rect.left;
-      startY = event.clientY - rect.top;
+
+      const containerRect = container.getBoundingClientRect();
+      const imageRect = image.getBoundingClientRect();
+      
+      // Calculate image position relative to container
+      imageOffsetX = imageRect.left - containerRect.left;
+      imageOffsetY = imageRect.top - containerRect.top;
+
+      // Convert mouse position to image coordinates
+      const mouseX = event.clientX - containerRect.left - imageOffsetX;
+      const mouseY = event.clientY - containerRect.top - imageOffsetY;
+
       selectionBox = {
-        x: startX,
-        y: startY,
-        width: 0,
-        height: 0
+          x: mouseX,
+          y: mouseY,
+          width: 0,
+          height: 0
       };
-    };
-  
-    const handleMouseMove = (event: MouseEvent) => {
+  };
+
+  const handleMouseMove = (event: MouseEvent) => {
       if (!isSelecting) return;
-  
       hasMoved = true;
-      const rect = image.getBoundingClientRect();
-      const currentX = event.clientX - rect.left;
-      const currentY = event.clientY - rect.top;
-  
-      // Calculate the top-left corner and the dimensions
+
+      const containerRect = container.getBoundingClientRect();
+      const currentX = event.clientX - containerRect.left - imageOffsetX;
+      const currentY = event.clientY - containerRect.top - imageOffsetY;
+
       selectionBox = {
-        x: Math.min(startX, currentX),
-        y: Math.min(startY, currentY),
-        width: Math.abs(currentX - startX),
-        height: Math.abs(currentY - startY)
+          x: Math.min(selectionBox.x, currentX),
+          y: Math.min(selectionBox.y, currentY),
+          width: Math.abs(currentX - selectionBox.x),
+          height: Math.abs(currentY - selectionBox.y)
       };
-    };
-  
-    const handleMouseUp = () => {
-        if (!hasMoved || !isSelecting) {
-            isSelecting = false;
-            return;
-        }
+  };
 
-        // Calculate scaling factors
-        const rect = image.getBoundingClientRect();
-        const scaleX = image.naturalWidth / rect.width;
-        const scaleY = image.naturalHeight / rect.height;
+  const handleMouseUp = () => {
+      if (!hasMoved || !isSelecting) {
+          isSelecting = false;
+          return;
+      }
 
-        // Scale coordinates to original image dimensions
-        const scaledSelection = {
-            x: selectionBox.x * scaleX,
-            y: selectionBox.y * scaleY,
-            width: selectionBox.width * scaleX,
-            height: selectionBox.height * scaleY
-        };
+      const imageRect = image.getBoundingClientRect();
+      const scaleX = image.naturalWidth / imageRect.width;
+      const scaleY = image.naturalHeight / imageRect.height;
 
-        // Round to nearest integer (pixel values)
-        const finalBox = new Box(
-            Math.round(scaledSelection.x),
-            Math.round(scaledSelection.y),
-            Math.round(scaledSelection.width),
-            Math.round(scaledSelection.height)
-        );
+      const finalBox = new Box(
+          Math.round(selectionBox.x * scaleX),
+          Math.round(selectionBox.y * scaleY),
+          Math.round(selectionBox.width * scaleX),
+          Math.round(selectionBox.height * scaleY)
+      );
 
-        if (onFinishCropping) {
-            onFinishCropping(finalBox);
-        }
+      onFinishCropping?.(finalBox);
+      finalSelectionBox = { ...selectionBox };
+      isSelecting = false;
+  };
 
-        // Save scaled version for display (optional, see note below)
-        finalSelectionBox = { ...selectionBox };
-        isSelecting = false;
-    };
-  
-    onMount(() => {
-      // Prevents default image dragging behavior
+  // Rotation functions remain the same
+  function getCurrentRotation(): number {
+      const transform = window.getComputedStyle(square).getPropertyValue('transform');
+      if (transform === 'none') return 0;
+      const values = transform.match(/matrix\((.+)\)/)?.[1].split(', ');
+      return values ? Math.atan2(parseFloat(values[1]), parseFloat(values[0])) : 0;
+  }
+
+  function rotationGrab(event: MouseEvent) {
+      event.preventDefault();
+      event.stopPropagation();
+      isDragging = true;
+      handle.classList.replace('cursor-grab', 'cursor-grabbing');
+
+      const rect = square.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+      
+      currentRotation = getCurrentRotation();
+      startAngle = currentRotation - mouseAngle;
+  }
+
+  function rotationMouseMove(event: MouseEvent) {
+      if (!isDragging) return;
+      const rect = square.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+      const degrees = (mouseAngle + startAngle) * (180 / Math.PI);
+      square.style.transform = `rotate(${degrees}deg)`;
+  }
+
+  function rotationUngrab() {
+      isDragging = false;
+      handle.classList.replace('cursor-grabbing', 'cursor-grab');
+  }
+
+  onMount(() => {
       image.ondragstart = () => false;
-    });
-  </script>
-  
-  <div class="relative inline-block w-full h-full">
-    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <!-- svelte-ignore a11y_img_redundant_alt -->
-    <CameraStream
-      bind:imageElement={image}
-      camera={camera}
-      mousedown={handleMouseDown}
-      mousemove={handleMouseMove}
-      mouseup={handleMouseUp}
-      mouseleave={handleMouseUp}
-    />
-  
-    {#if isSelecting && hasMoved}
+  });
+</script>
+
+<svelte:window
+  on:mousemove={rotationMouseMove}
+  on:mouseup={rotationUngrab}
+/>
+
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="relative inline-block w-full h-full"
+  bind:this={container}
+  on:mousedown={handleMouseDown}
+  on:mousemove={handleMouseMove}
+  on:mouseup={handleMouseUp}
+  on:mouseleave={handleMouseUp}
+>
+  <div class="w-full h-full grid place-items-center p-10">
       <div
-        class="absolute border-2 border-dashed border-red-500 bg-red-500/20 pointer-events-none"
-        style="
-          left: {selectionBox.x}px;
-          top: {selectionBox.y}px;
-          width: {selectionBox.width}px;
-          height: {selectionBox.height}px;
-        "
-      ></div>
-    {/if}
-  
-    {#if finalSelectionBox}
-      <div
-        class="absolute border-2 border-blue-500 pointer-events-none"
-        style="
-          left: {finalSelectionBox.x}px;
-          top: {finalSelectionBox.y}px;
-          width: {finalSelectionBox.width}px;
-          height: {finalSelectionBox.height}px;
-        "
-      ></div>
-    {/if}
+          bind:this={square}
+          class="relative w-40 h-40 transform origin-center overflow-visible"
+          style="transform: rotate(0deg)"
+      >
+          <!-- svelte-ignore a11y_img_redundant_alt -->
+          <img
+              src="https://img.flawlessfiles.com/_r/100x100/100/avatar/dragon_ball/av-db-02.jpeg"
+              alt="Rotatable Image"
+              class="w-full h-full object-cover"
+              bind:this={image}
+          />
+
+          <div class="absolute left-1/2 -translate-x-1/2 top-full w-px h-[0.5cm] bg-blue-500"></div>
+
+          <div
+              bind:this={handle}
+              class="absolute left-1/2 -translate-x-1/2 top-full mt-[0.5cm]
+                    w-6 h-6 bg-blue-500 rounded-full cursor-grab z-10"
+              on:mousedown={rotationGrab}
+          ></div>
+      </div>
   </div>
-  
+
+  {#if isSelecting && hasMoved}
+      <div
+          class="absolute border-2 border-dashed border-red-500 bg-red-500/20 pointer-events-none"
+          style="
+              left: {selectionBox.x + imageOffsetX}px;
+              top: {selectionBox.y + imageOffsetY}px;
+              width: {selectionBox.width}px;
+              height: {selectionBox.height}px;
+          "
+      ></div>
+  {/if}
+
+  {#if finalSelectionBox}
+      <div
+          class="absolute border-2 border-blue-500 pointer-events-none"
+          style="
+              left: {finalSelectionBox.x + imageOffsetX}px;
+              top: {finalSelectionBox.y + imageOffsetY}px;
+              width: {finalSelectionBox.width}px;
+              height: {finalSelectionBox.height}px;
+          "
+      ></div>
+  {/if}
+</div>
+
+<style>
+  .cursor-grab { cursor: grab; }
+  .cursor-grabbing { cursor: grabbing; }
+</style>
