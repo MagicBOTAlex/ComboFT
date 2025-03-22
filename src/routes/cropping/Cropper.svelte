@@ -17,6 +17,8 @@
 
   // Selection state
   let selectionBox = { x: 0, y: 0, width: 0, height: 0 };
+  let startX = 0;
+  let startY = 0;
   let finalSelectionBox: { x: number; y: number; width: number; height: number } | null = null;
   let isSelecting = false;
   let hasMoved = false;
@@ -40,9 +42,11 @@
       const mouseX = event.clientX - containerRect.left - imageOffsetX;
       const mouseY = event.clientY - containerRect.top - imageOffsetY;
 
+      startX = mouseX;
+      startY = mouseY;
       selectionBox = {
-          x: mouseX,
-          y: mouseY,
+          x: startX,
+          y: startY,
           width: 0,
           height: 0
       };
@@ -57,10 +61,10 @@
       const currentY = event.clientY - containerRect.top - imageOffsetY;
 
       selectionBox = {
-          x: Math.min(selectionBox.x, currentX),
-          y: Math.min(selectionBox.y, currentY),
-          width: Math.abs(currentX - selectionBox.x),
-          height: Math.abs(currentY - selectionBox.y)
+        x: Math.min(startX, currentX),
+        y: Math.min(startY, currentY),
+        width: Math.abs(currentX - startX),
+        height: Math.abs(currentY - startY)
       };
   };
 
@@ -135,7 +139,7 @@
 />
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="relative inline-block w-full h-full"
+<div class="relative inline-block w-full h-full select-none"
   bind:this={container}
   on:mousedown={handleMouseDown}
   on:mousemove={handleMouseMove}
