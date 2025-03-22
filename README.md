@@ -1,10 +1,15 @@
-This is an alternative UI for [ETVR](https://github.com/EyeTrackVR/EyeTrackVR).
+This is an alternative UI for [ETVR](https://github.com/EyeTrackVR/EyeTrackVR) **AND** [Project: Babble](https://github.com/Project-Babble/ProjectBabble). \
 A lot of the features of ETVR is still not supported, since the backend doens't support it yet.
 This project has been a solo adventure, but I am hopeful to collaborate with others.
 
-As soon as [Project: Babble](https://github.com/Project-Babble/ProjectBabble) gets some kind of backend version.
-I will intergrate it into ComboFT. 
+~~As soon as [Project: Babble](https://github.com/Project-Babble/ProjectBabble) gets some kind of backend version.~~
+~~I will intergrate it into ComboFT.~~ **I've made my own babble backend. It is intergrated and working** \
 My idea is merge ETVR and Project: Babble into one program, because having 2 programs is really annoying.
+
+### Todo list for myself for the frontend
+- [ ] Rotate and crop
+- [ ] Rebrand to ComboFT because this is not ETVR or Babble
+- [ ] Calibration api intergration
 
 # Preview
 <table>
