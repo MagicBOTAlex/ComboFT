@@ -90,5 +90,9 @@ git fetch
 git submodule update --init --recursive
 ```
 
-<img src="https://github.com/user-attachments/assets/60984fb0-7a5c-4335-bc15-998c5a0d8c22" align="right" alt="4" width = 400px height = 300px> \
-Fun fact. Most of this was made while in VR. It is awesome to program in space.
+<!-- <img src="https://github.com/user-attachments/assets/60984fb0-7a5c-4335-bc15-998c5a0d8c22" style="display: block" align="right" alt="4" width = 400px height = 300px> \ -->
+Fun fact. Most of the UI was made while in VR. It is awesome to program in space. \
+\
+<img src="https://github.com/user-attachments/assets/b25cdb37-edcc-4918-9922-e0063fe264c0" style="display: block" align="right" alt="4" width = 400px height = 300px> \
+That is my honest reaction when deciding to make this. Ong frfr \
+
