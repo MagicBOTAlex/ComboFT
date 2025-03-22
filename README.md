@@ -1,10 +1,15 @@
-This is an alternative UI for [ETVR](https://github.com/EyeTrackVR/EyeTrackVR).
+This is an alternative UI for [ETVR](https://github.com/EyeTrackVR/EyeTrackVR) **AND** [Project: Babble](https://github.com/Project-Babble/ProjectBabble). \
 A lot of the features of ETVR is still not supported, since the backend doens't support it yet.
 This project has been a solo adventure, but I am hopeful to collaborate with others.
 
-As soon as [Project: Babble](https://github.com/Project-Babble/ProjectBabble) gets some kind of backend version.
-I will intergrate it into ComboFT. 
+~~As soon as [Project: Babble](https://github.com/Project-Babble/ProjectBabble) gets some kind of backend version.~~
+~~I will intergrate it into ComboFT.~~ **I've made my own babble backend. It is intergrated and working** \
 My idea is merge ETVR and Project: Babble into one program, because having 2 programs is really annoying.
+
+### Todo list for myself for the frontend
+- [ ] Rotate and crop
+- [ ] Rebrand to ComboFT because this is not ETVR or Babble
+- [ ] Calibration api intergration
 
 # Preview
 <table>
@@ -85,5 +90,9 @@ git fetch
 git submodule update --init --recursive
 ```
 
-<img src="https://github.com/user-attachments/assets/60984fb0-7a5c-4335-bc15-998c5a0d8c22" align="right" alt="4" width = 400px height = 300px> \
-Fun fact. Most of this was made while in VR. It is awesome to program in space.
+<!-- <img src="https://github.com/user-attachments/assets/60984fb0-7a5c-4335-bc15-998c5a0d8c22" style="display: block" align="right" alt="4" width = 400px height = 300px> \ -->
+Fun fact. Most of the UI was made while in VR. It is awesome to program in space. \
+\
+<img src="https://github.com/user-attachments/assets/b25cdb37-edcc-4918-9922-e0063fe264c0" style="display: block" align="right" alt="4" width = 400px height = 300px> \
+That is my honest reaction when deciding to make this. Ong frfr \
+
