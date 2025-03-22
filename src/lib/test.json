@@ -167,6 +167,25 @@
                     }
                 }
             }
+        },
+        "/shutdown": {
+            "get": {
+                "tags": [
+                    "control"
+                ],
+                "summary": "Force Shutdowns The Babble Process",
+                "operationId": "Force_shutdowns_the_babble_process_shutdown_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {

@@ -1,11 +1,12 @@
 export class PB_API {
-    public baseUrl: string;
-  
-    constructor(baseUrl: string) {
-      this.baseUrl = baseUrl;
-    }
-  
-    private async getRequest(path: string, params?: Record<string, any>) {
+  public baseUrl: string;
+
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  private async getRequest(path: string, params?: Record<string, any>) {
+    try {
       const url = new URL(`${this.baseUrl}${path}`);
       if (params) {
         Object.entries(params).forEach(([key, value]) => {
@@ -14,38 +15,47 @@ export class PB_API {
           }
         });
       }
-  
+
       const response = await fetch(url.toString());
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        return "404"; // Return 404 string for non-OK responses
       }
       return await response.json();
-    }
-  
-    // Streaming endpoints
-    async getRawCameraFeed() {
-      return this.getRequest('/camera/raw/');
-    }
-  
-    async getCroppedCameraFeed() {
-      return this.getRequest('/camera/cropped/');
-    }
-  
-    async getProcessedCameraFeed() {
-      return this.getRequest('/camera/processed/');
-    }
-  
-    // Calibration endpoints
-    async startCalibration(caliSamples?: number) {
-      return this.getRequest('/calibrate/start', { caliSamples });
-    }
-  
-    async getCalibrationStatus() {
-      return this.getRequest('/calibrate/status');
-    }
-  
-    async setCalibrationUsage(targetState: number) {
-      return this.getRequest('/calibrate/set', { targetState });
+    } catch (error) {
+      return "404"; // Return 404 string for any network errors
     }
   }
-  
+
+  // Streaming endpoints
+  async getRawCameraFeed() {
+    return this.baseUrl + 'camera/raw/';
+  }
+
+  async getCroppedCameraFeed() {
+    return this.baseUrl + ('camera/cropped/');
+  }
+
+  async getProcessedCameraFeed() {
+    return this.baseUrl + ('camera/processed/');
+  }
+
+  // Calibration endpoints
+  async startCalibration(caliSamples?: number) {
+    return this.getRequest('/calibrate/start', { caliSamples });
+  }
+
+  async getCalibrationStatus() {
+    return this.getRequest('/calibrate/status');
+  }
+
+  async setCalibrationUsage(targetState: number) {
+    return this.getRequest('/calibrate/set', { targetState });
+  }
+
+  // Control endpoints
+  async shutdown() {
+    const url = new URL(`${this.baseUrl}/shutdown`);
+    // Fire-and-forget: Don't await to avoid blocking, catch errors silently
+    fetch(url.toString()).catch(() => { });
+  }
+}

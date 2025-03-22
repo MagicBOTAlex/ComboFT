@@ -11,19 +11,25 @@ import type { ET_TrackerConfigOutput } from "./structs/ET_Api/ET_TrackerConfigOu
 import  { TrackerPosition } from "./structs/TrackerPosition";
 import { writable, type Writable} from 'svelte/store';
 import { PB_API } from "./PB_API";
+import { PB_Controller } from "./PB_Controller";
+import { BackendTarget } from "./structs/BackendTarget";
 
 export class BackendController {
     ET_Status: BackendStatus = BackendStatus.Stopped;
     ET_Api: ETApi; // Oh shit, TS supports this (props)? I love it!!!
-    PB_Api: PB_API; 
     ET_Config: ET_Config |undefined;
     ET_UUIDs: Partial<Record<TrackerPosition, string | undefined>> = {}; // I Really hate this UUID system. We're never going to have that many cameras!!! Other things will break down long before.
     store: Writable<BackendController> | any;
 
+    PB_Api: PB_API;
+    babbleController: PB_Controller;
+
     constructor(ET_url: string, PB_url: string) {
         this.ET_Api = new ETApi(ET_url);
-        this.PB_Api = new PB_API(PB_url);
         this.store = writable(this);
+        
+        this.PB_Api = new PB_API(PB_url);
+        this.babbleController = new PB_Controller(this.PB_Api);
         
         this.initialize();
     }
@@ -48,6 +54,8 @@ export class BackendController {
             }
         }, 6000);
         this.ET_Api.startETVR();
+
+        this.babbleController.start();
     }
 
     async Stop() {
@@ -59,15 +67,16 @@ export class BackendController {
                 clearInterval(shutdownInterval);
             }
         }, 500);
+
+        this.babbleController.stop();
     }
 
-    async Reset() { 
-        await this.ET_Api.restartETVR(); 
-    }
-    async quit() {
+    async quit() { // Not used
         await this.ET_Api.shutdownETVR(); 
         this.ET_Status = BackendStatus.Quit;
         this.store.set(this);
+
+        this.babbleController.stop();
     }
 
     async getConfig(forceUpdate: boolean = false) {
@@ -79,19 +88,28 @@ export class BackendController {
     }
 
     // Runs to check current status
-    public async checkStatus() {
-        try {
-            const newStatus = await this.ET_Api.getETVRStatus();
-            const newStatusEnum = newStatus ? BackendStatus.Running : BackendStatus.Stopped;
-            
-            if (newStatusEnum !== this.ET_Status) {
-                Logger.log('info', `ETVR ${newStatus ? 'now running...' : 'stopped.'}`);
-                this.ET_Status = newStatusEnum;
-                this.store.set(this);
+    // Default ETVR to keep old code support. This is a one man show after all
+    public async checkStatus(target: BackendTarget = BackendTarget.ETVR): Promise<BackendStatus> {
+        if (target == BackendTarget.ETVR) {
+            try {
+                const newStatus = await this.ET_Api.getETVRStatus();
+                const newStatusEnum = newStatus ? BackendStatus.Running : BackendStatus.Stopped;
+                
+                if (newStatusEnum !== this.ET_Status) {
+                    Logger.log('info', `ETVR ${newStatus ? 'now running...' : 'stopped.'}`);
+                    this.ET_Status = newStatusEnum;
+                    this.store.set(this);
+                }
+    
+                return newStatusEnum;
+            } catch (error) {
+                Logger.log('error', 'Status check failed', error);
             }
-        } catch (error) {
-            Logger.log('error', 'Status check failed', error);
+        } else {
+            return await this.babbleController.getStatus();
         }
+        
+        return BackendStatus.Stopped;
     }
 
     private async ensureTrackerUuid(position: TrackerPosition): Promise<string> {
@@ -109,13 +127,27 @@ export class BackendController {
     // Here comes the powerful stuff by making this class:
     // Returns the Stream URL
     public async getTrackingCameraStream(position: TrackerPosition, streamType: CameraStreamType): Promise<string> {
-        try {
-            const uuid = await this.ensureTrackerUuid(position);
-            const streamAPIName = getStreamTypeAPIName(streamType);
-            return `${this.ET_Api.baseURL}/etvr/feed/${uuid}/${streamAPIName}`;
-        } catch (error) {
-            Logger.log('error', 'Failed to get camera stream URL', error);
-            return "";
+        if (position != TrackerPosition.Babble)
+        {
+            try {
+                const uuid = await this.ensureTrackerUuid(position);
+                const streamAPIName = getStreamTypeAPIName(streamType);
+                return `${this.ET_Api.baseURL}/etvr/feed/${uuid}/${streamAPIName}`;
+            } catch (error) {
+                Logger.log('error', 'Failed to get camera stream URL', error);
+                return "";
+            }
+        } else {
+            switch (streamType){
+                case CameraStreamType.Raw:
+                    return this.PB_Api.getRawCameraFeed()
+
+                case CameraStreamType.Cropped:
+                    return this.PB_Api.getCroppedCameraFeed()
+
+                case CameraStreamType.Algorithmed:
+                    return this.PB_Api.getProcessedCameraFeed()
+            }
         }
     }
 
@@ -159,37 +191,69 @@ export class BackendController {
     }
 
     public async pushCameraAddr(cam: Camera) {
-        try {
-            if (!cam.position) return;
-            const uuid = await this.ensureTrackerUuid(cam.position);
-            await this.ET_Api.updateTracker(uuid, {
-                camera: { capture_source: cam.addr }
+        if (cam.position != TrackerPosition.Babble){
+            try {
+                if (!cam.position) return;
+                const uuid = await this.ensureTrackerUuid(cam.position);
+                await this.ET_Api.updateTracker(uuid, {
+                    camera: { capture_source: cam.addr }
+                });
+            } catch (error) {
+                Logger.log('error', 'Failed to push camera address', error);
+            }
+        } else {
+            this.babbleController.updateConfig({
+                "cam": {
+                    "capture_source": cam.addr
+                }
             });
-        } catch (error) {
-            Logger.log('error', 'Failed to push camera address', error);
         }
     }
 
     public async pushCrop(position: TrackerPosition, croppingBox: Box) {
-        try {
-            const uuid = await this.ensureTrackerUuid(position);
-            const update = croppingBox.isValid() ? {
-                roi_x: croppingBox.x,
-                roi_y: croppingBox.y,
-                roi_w: croppingBox.w,
-                roi_h: croppingBox.h
-            } : {
-                roi_x: null,
-                roi_y: null,
-                roi_w: null,
-                roi_h: null
-            };
-
-            await this.ET_Api.updateTracker(uuid, {
-                camera: update
-            });
-        } catch (error) {
-            Logger.log('error', 'Failed to push crop', error);
+        if (position != TrackerPosition.Babble) {
+            try {
+                const uuid = await this.ensureTrackerUuid(position);
+                const update = croppingBox.isValid() ? {
+                    roi_x: croppingBox.x,
+                    roi_y: croppingBox.y,
+                    roi_w: croppingBox.w,
+                    roi_h: croppingBox.h
+                } : {
+                    roi_x: null,
+                    roi_y: null,
+                    roi_w: null,
+                    roi_h: null
+                };
+    
+                await this.ET_Api.updateTracker(uuid, {
+                    camera: update
+                });
+            } catch (error) {
+                Logger.log('error', 'Failed to push crop', error);
+            }
+        } else {
+            try {
+                const update = croppingBox.isValid() ? {
+                    roi_window_x: croppingBox.x,
+                    roi_window_y: croppingBox.y,
+                    roi_window_w: croppingBox.w,
+                    roi_window_h: croppingBox.h
+                } : {
+                    roi_window_x: null,
+                    roi_window_y: null,
+                    roi_window_w: null,
+                    roi_window_h: null
+                };
+    
+                this.babbleController.updateConfig({
+                    "cam": {
+                        ...update
+                    }
+                });
+            } catch (error) {
+                Logger.log('error', 'Failed to push crop', error);
+            }
         }
     }
 
@@ -218,10 +282,14 @@ export class BackendController {
 
     public async startCalibration(position: TrackerPosition) {
         try {
-            const uuid = await this.ensureTrackerUuid(position);
-            await this.ET_Api.updateTracker(uuid, {
-                calibrationData: { min_x: Math.random() * 11 - 100 }
-            });
+            if (position != TrackerPosition.Babble){
+                const uuid = await this.ensureTrackerUuid(position);
+                await this.ET_Api.updateTracker(uuid, {
+                    calibrationData: { min_x: Math.random() * 11 - 100 }
+                });
+            } else {
+                await this.PB_Api.startCalibration();
+            }
         } catch (error) {
             Logger.log('error', 'Calibration failed to start', error);
         }

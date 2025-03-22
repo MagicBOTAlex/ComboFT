@@ -3,21 +3,37 @@ import { exists, readTextFile, writeTextFile, BaseDirectory, readDir  } from '@t
 import { invoke } from '@tauri-apps/api/core';
 import { getCurrentDir, updateJsonProp } from "./RustInvoker";
 import * as path from '@tauri-apps/api/path';
+import { Child, Command } from '@tauri-apps/plugin-shell';
+import { BackendStatus } from "./structs/BackendStatus";
 
 
 export class PB_Controller {
     private backendUrl: string;
     private PB_Api: PB_API;
+
+    private backendCommand: Command<string>;
+    private backendSidecar: Child |undefined = undefined;
     
     constructor(PB_Api: PB_API) {
         this.PB_Api = PB_Api;
         this.backendUrl = PB_Api.baseUrl;
+        this.backendCommand = Command.sidecar('../PB-Backend/dist/PB-Backend'); 
 
         this.initConfig();
     }
 
     async test(){
         await updateJsonProp(await this.getConfigPath(), {"version": 3});
+    }
+
+    async start(){
+        this.backendSidecar = await this.backendCommand.spawn();
+    }
+
+    async stop(){
+        for (let I = 0; I < 3; I++) {
+            await this.PB_Api.shutdown();
+        }
     }
 
     async initConfig(){
@@ -27,16 +43,24 @@ export class PB_Controller {
         }
     }
 
+    async getStatus(): Promise<BackendStatus>{
+        let response = await this.PB_Api.getCalibrationStatus();
+        if (response === "404")
+            return BackendStatus.Stopped
+        else
+            return BackendStatus.Running
+    }
+
     async updateConfig(json: Record<string, any>){
         await updateJsonProp(await this.getConfigPath(), json);
     }
 
     async getConfigPath(): Promise<string> {
-        return await path.join(await getCurrentDir(), '../PB-Backend/BabbleApp/babble_settings.json');
+        return await path.join(await getCurrentDir(), 'babble_settings.json');
     }
 
     async getDefaultConfigPath(): Promise<string> {
-        return await path.join(await getCurrentDir(), '../PB-Backend/BabbleApp/default.json');
+        return await path.join(await getCurrentDir(), '../PB-Backend/BabbleApp/default.json'); // TODO: This only works durent dev enviorment
     }
 
     async loadDefaultConfig(){

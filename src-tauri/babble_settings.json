@@ -6,7 +6,7 @@
     "roi_window_y": 0,
     "roi_window_w": 0,
     "roi_window_h": 0,
-    "capture_source": null,
+    "capture_source": "http://192.168.50.226/",
     "gui_vertical_flip": false,
     "gui_horizontal_flip": false,
     "use_ffmpeg": false

@@ -60,8 +60,5 @@ declare global {
   }
 }
 
-export const BackController = new BackendController("http://127.0.0.1:8000");
+export const BackController = new BackendController("http://127.0.0.1:8000", "http://127.0.0.1:4422");
 window.document.BackendController = BackController;
-
-export const BabbleControler = new PB_Controller("http://127.0.0.1:4422");
-window.document.BabbleControler = BabbleControler;

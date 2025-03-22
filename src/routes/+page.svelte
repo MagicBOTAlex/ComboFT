@@ -1,17 +1,14 @@
 <script lang="ts">
-    import { BabbleControler } from "@src/store";
-    import { Child, Command } from '@tauri-apps/plugin-shell';
+    import { BackController } from '@src/store';
     // FUCK YOU TAURI, fucking ass documentation. 
     // In one sentence: "...where name is either "app", "my-sidecar" or "sidecar" instead of "binaries/app" for instance."
     // A little further down, it says: "The string provided to Command.sidecar must match one of the strings defined in the externalBin configuration array."
-    const command = Command.sidecar('../PB-Backend/dist/PB-Backend'); 
-    let child: Child | undefined = undefined;
 
     async function test1(){
-        child = await command.spawn()
+        BackController.babbleController.start();
     }
     async function test2(){
-        child!.kill();
+        BackController.babbleController.stop();
     }
 </script>
 
