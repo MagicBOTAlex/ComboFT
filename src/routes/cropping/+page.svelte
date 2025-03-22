@@ -48,7 +48,7 @@
             <div>Click and drag to select cropping area.</div>
         </div>
         <div class="divider -mx-20"></div>
-        <div class="p-4 bg-base-200 rounded-lg">
+        <div class="p-4 border border-base-200 bg-grid rounded-lg">
             <div class="w-full h-full">
                 {#if croppingCam ||true}
                     <Cropper {onFinishCropping} camera={croppingCam}/>
@@ -60,3 +60,22 @@
         </div>
     </div>
 </div>
+
+<style>
+    .bg-grid {
+        background:
+            linear-gradient(-90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+            #f2f2f2;
+        background-size:
+            4px 4px,
+            4px 4px,
+            80px 80px,
+            80px 80px,
+            80px 80px,
+            80px 80px,
+            80px 80px,
+            80px 80px;
+        background-color: var(--color-base-100);
+    }
+</style>

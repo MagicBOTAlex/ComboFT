@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Box } from "@src/lib/structs/Box";
+    import { Maximize2 } from "lucide-svelte";
   import { onMount } from "svelte";
 
   export let onFinishCropping: (finalBox: Box) => void | undefined;
@@ -121,6 +122,10 @@
       const mouseAngle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
       const degrees = (mouseAngle + startAngle) * (180 / Math.PI);
       square.style.transform = `rotate(${degrees}deg)`;
+
+      // Convert radians to degrees and log with degree symbol
+      const currentRotationDeg = (getCurrentRotation() * (180 / Math.PI));
+      console.log(`${currentRotationDeg.toFixed(2)}°`);
   }
 
   function rotationUngrab() {
@@ -149,7 +154,7 @@
   <div class="w-full h-full grid place-items-center p-10">
       <div
           bind:this={square}
-          class="relative w-40 h-40 transform origin-center overflow-visible"
+          class="relative w-60 h-60 transform origin-center overflow-visible"
           style="transform: rotate(0deg)"
       >
           <!-- svelte-ignore a11y_img_redundant_alt -->
@@ -160,14 +165,22 @@
               bind:this={image}
           />
 
-          <div class="absolute left-1/2 -translate-x-1/2 top-full w-px h-[0.5cm] bg-blue-500"></div>
-
+          <div class="absolute left-1/2 -translate-x-1/2 top-full w-px h-[0.5cm] border border-dashed border-secondary"></div>
+            <div
+              bind:this={handle}
+              class="absolute left-1/2 -translate-x-1/2 top-full mt-[0.5cm]
+                    w-6 h-6 bg-none rounded-full cursor-grab z-10
+                    flex items-center justify-center"
+              on:mousedown={rotationGrab}
+            >
+              <Maximize2 class="rotate-45 w-4 h-4 text-secondary" />
+            </div>
           <div
               bind:this={handle}
               class="absolute left-1/2 -translate-x-1/2 top-full mt-[0.5cm]
-                    w-6 h-6 bg-blue-500 rounded-full cursor-grab z-10"
-              on:mousedown={rotationGrab}
-          ></div>
+                    w-6 h-6 border border-secondary rounded-full cursor-grab z-10"
+              on:mousedown={rotationGrab}>
+          </div>
       </div>
   </div>
 
