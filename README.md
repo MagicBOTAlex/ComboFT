@@ -7,9 +7,11 @@ This project has been a solo adventure, but I am hopeful to collaborate with oth
 My idea is merge ETVR and Project: Babble into one program, because having 2 programs is really annoying.
 
 ### Todo list for myself for the frontend
-- [ ] Rotate and crop
-- [ ] Rebrand to ComboFT because this is not ETVR or Babble
-- [ ] Calibration api intergration
+- [x] Rotate and crop
+- [x] Rebrand to ComboFT because this is not ETVR or Babble
+- [x] Calibration api intergration
+
+### UPDATE: I learnt a lot of frontend and backend from this project. But I have stopped development now, because no one cared. So now I have moved on to supporting other projects.
 
 # Preview
 <table>
