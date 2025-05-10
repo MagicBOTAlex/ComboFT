@@ -1,3 +1,5 @@
+# Discontinued!!! I now use [dockered Babble](https://github.com/MagicBOTAlex/DockeredBabble) and [Open-source Eyetracking](https://github.com/MagicBOTAlex/DockeredMLEyeTrack). ETVR can do whatever they're doing.
+
 This is an alternative UI for [ETVR](https://github.com/EyeTrackVR/EyeTrackVR) **AND** [Project: Babble](https://github.com/Project-Babble/ProjectBabble). \
 A lot of the features of ETVR is still not supported, since the backend doens't support it yet.
 This project has been a solo adventure, but I am hopeful to collaborate with others.
@@ -28,7 +30,12 @@ My idea is merge ETVR and Project: Babble into one program, because having 2 pro
       <td><img src="./githubImages/dashboard.png" alt="3" width = 400px height = 300px></td>
       <td><img src="./githubImages/inspect.png" align="right" alt="4" width = 400px height = 300px>
   </td>
+    <tr>
+<img src="https://github.com/user-attachments/assets/a5b4a07e-b937-4e2d-9f2f-f616d0448e81" align="center" alt="4" width = 800px height = 600px>
+      </td>
 </table>
+
+
 ###### Note: It is really likely that a lot of this will change.
 
 
